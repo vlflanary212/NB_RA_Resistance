@@ -1,0 +1,28 @@
+# Rproject files
+.Rhistory
+.Rapp.history
+.RData
+.Renviron
+.Ruserdata
+.Rproj.user/
+
+# Temporary files made by Rmarkdown
+*.utf8.md
+*.knit.md
+
+# Cache
+.DS_Store
+*_cache/
+/cache/
+
+# Large Docker and Singularity files/objects
+bin/*
+!bin/Dockerfile
+!rstudio-prefs.json
+!run_rstudio_singularity.sh
+
+# Job output and error files
+src/*/*/*.err
+src/*/*/*.out
+
+
