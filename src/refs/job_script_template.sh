@@ -13,7 +13,7 @@
 
 ##### VARIABLES #####
 # directories
-wd="/data/project/sen-lab/Victoria/Neuroblastoma_EDA"  # working directory
+wd=""  # working directory
 
 # files
 

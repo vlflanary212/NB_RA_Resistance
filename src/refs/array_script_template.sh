@@ -13,7 +13,7 @@
 #SBATCH --error=%x_%A_%a.err
 
 ##### WORKING DIRECTORY #####
-wd="/data/project/sen-lab/Victoria/Neuroblastoma_EDA"
+wd=""
 
 ##### ARRAY #####
 sample_list=$wd"/doc/..."
