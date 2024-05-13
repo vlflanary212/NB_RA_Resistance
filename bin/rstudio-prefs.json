@@ -1,8 +1,7 @@
 {
+    "document_author": "Victoria L. Flanary",
     "editor_theme": "Kr Theme",
     "jobs_tab_visibility": "shown",
-    "document_author": "Victoria Flanary",
-    "initial_working_directory": "~",
     "rainbow_parentheses": true,
     "posix_terminal_shell": "bash",
     "rmd_viewer_type": "pane",

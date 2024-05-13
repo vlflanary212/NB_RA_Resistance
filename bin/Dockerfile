@@ -46,10 +46,10 @@ RUN R -e 'install.packages(c("tidyverse", "remotes",  "BiocManager", "devtools",
 RUN R -e 'install.packages(c("ggfortify", "ggthemes", "ggpubr", "patchwork", "RColorBrewer", "colorspace"))'
 
 #### Project Specific CRAN Packages ####
-RUN R -e 'install.packages(c())'
+RUN R -e 'install.packages(c(""))'
 
 ##----------------------------------------------------------------------------##
 ## GitHub Packages
 ##----------------------------------------------------------------------------##
 
-RUN R -e 'devtools::install_github()'
+RUN R -e 'devtools::install_github("")'
