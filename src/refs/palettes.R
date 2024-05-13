@@ -1,3 +1,8 @@
+sen_palettes <- data.frame(
+  as = c("firebrick", "steelblue2", "darkgrey", "green3", "purple", "orange"),
+  vf = c("orchid4", "slateblue", "steelblue", "aquamarine4", "lightpink3", "goldenrod")
+)
+
 vf_palettes <- data.frame(
   light <- c("indianred", "lightpink", "thistle", "lavender", "lightblue", "lightcyan2", "mistyrose", "bisque", "lightgray"),
   med <- c("firebrick", "maroon", "orchid4", "slateblue", "steelblue", "aquamarine4", "lightpink3", "goldenrod", "darkgray"),
