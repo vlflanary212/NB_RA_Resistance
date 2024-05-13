@@ -5,6 +5,7 @@
 .Renviron
 .Ruserdata
 .Rproj.user/
+*.Rproj
 
 # Temporary files made by Rmarkdown
 *.utf8.md
