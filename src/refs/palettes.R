@@ -1,6 +1,6 @@
 sen_palettes <- data.frame(
   as = c("firebrick", "steelblue2", "darkgrey", "green3", "purple", "orange"),
-  vf = c("orchid4", "slateblue", "steelblue", "aquamarine4", "lightpink3", "darkgoldenrod")
+  vf = c("violetred4", "orchid4", "slateblue", "steelblue", "aquamarine4", "lightpink3")
 )
 
 vf_palettes <- data.frame(
@@ -27,13 +27,12 @@ brpu <- c("darkgoldenrod", "darkgoldenrod3", "goldenrod", "papayawhip", "linen",
 bvrv <- c("darkslateblue", "slateblue3", "slateblue2", "lavender", "white", "mistyrose", "lightpink", "maroon", "violetred4")
 bvbr <- c("darkslateblue", "slateblue3", "slateblue2", "lavender", "floralwhite", "papayawhip", "goldenrod", "darkgoldenrod3", "darkgoldenrod")
 
-# Note: double-check if palettes are colorblind-friendly before use
-## first convert r color names to hex codes with gplots::col2hex(palette),
-## then check if colorblind-friendly with colorblindcheck::palette_check(palette, plot = TRUE)
 
-# Non-colorblind-friendly palettes: bupu, gnbu, sen_palettes$as
-# sen_palettes$vf is colorblind-friendly, but larger vf_palettes may not be
-## colors too close for comfort in vf_palettes: 
-### light: thistle and lightblue; lightgray and lightpink
-## med: maroon and aquamarine4; lightpink3 and darkgray
-## dark: darkorchid4 and darkslateblue; dimgray and lightpink4 and violetred4
+# Note: double-check if palettes are colorblind-friendly before use
+check_colorblind <- function(palette) {
+  library(gplots)
+  library(colorblindcheck)
+  temp_pal <- col2hex(palette)
+  palette_check(temp_pal, plot = TRUE)
+}
+# Non-colorblind-friendly palettes: bupu, gnbu, sen_palettes$as, entire vf_palettes (filter first)
