@@ -27,6 +27,7 @@ brpu <- c("darkgoldenrod", "darkgoldenrod3", "goldenrod", "papayawhip", "linen",
 bvrv <- c("darkslateblue", "slateblue3", "slateblue2", "lavender", "white", "mistyrose", "lightpink", "maroon", "violetred4")
 bvbr <- c("darkslateblue", "slateblue3", "slateblue2", "lavender", "floralwhite", "papayawhip", "goldenrod", "darkgoldenrod3", "darkgoldenrod")
 
+br <- c("floralwhite", "papayawhip", "goldenrod", "darkgoldenrod3", "darkgoldenrod", "darkgoldenrod4")
 
 # Note: double-check if palettes are colorblind-friendly before use
 check_colorblind <- function(palette) {
