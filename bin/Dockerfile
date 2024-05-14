@@ -43,7 +43,7 @@ RUN pip3 install
 
 #### General CRAN Packages ####
 RUN R -e 'install.packages(c("tidyverse", "remotes",  "BiocManager", "devtools", "knitr", "lintr", "styler", "here", "markdown")'
-RUN R -e 'install.packages(c("ggfortify", "ggthemes", "ggpubr", "patchwork", "RColorBrewer", "colorspace"))'
+RUN R -e 'install.packages(c("ggfortify", "ggthemes", "ggpubr", "patchwork", "RColorBrewer", "colorspace", "gplots", "colorblindcheck"))'
 
 #### Project Specific CRAN Packages ####
 RUN R -e 'install.packages(c(""))'
