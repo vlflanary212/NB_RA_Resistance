@@ -1,6 +1,6 @@
 sen_palettes <- data.frame(
   as = c("firebrick", "steelblue2", "darkgrey", "green3", "purple", "orange"),
-  vf = c("violetred4", "orchid4", "slateblue", "steelblue", "aquamarine4", "lightpink3")
+  vf = c("orchid4", "slateblue", "steelblue", "aquamarine4", "lightpink3", "goldenrod")
 )
 
 vf_palettes <- data.frame(
