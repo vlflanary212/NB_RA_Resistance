@@ -1,3 +1,4 @@
+# Custom original palettes
 sen_palettes <- data.frame(
   as = c("firebrick", "steelblue2", "darkgrey", "green3", "purple", "orange"),
   vf = c("orchid4", "slateblue", "steelblue", "aquamarine4", "lightpink3", "goldenrod")
@@ -9,6 +10,7 @@ vf_palettes <- data.frame(
   dark = c("firebrick4", "violetred4", "darkorchid4", "darkslateblue", "steelblue4", "darkslategray", "lightpink4", "darkgoldenrod", "dimgray")
 )
 
+# Customized RColorBrewer palettes
 gn <- c("mintcream", "lightcyan2", "aquamarine4", "darkslategray")
 brgn <- c("darkgoldenrod", "darkgoldenrod3", "goldenrod", "papayawhip", "floralwhite", "mintcream", "lightcyan2", "darkslategray3", "darkslategray4")
 
@@ -36,4 +38,3 @@ check_colorblind <- function(palette) {
   temp_pal <- col2hex(palette)
   palette_check(temp_pal, plot = TRUE)
 }
-# Non-colorblind-friendly palettes: bupu, gnbu, sen_palettes$as, entire vf_palettes (filter first)
