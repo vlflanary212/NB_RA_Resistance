@@ -10,19 +10,19 @@ vf_palettes <- data.frame(
 )
 
 gn <- c("mintcream", "lightcyan2", "aquamarine4", "darkslategray")
-brgn <- c("darkgoldenrod", "darkgoldenrod3", "goldenrod", "papayawhip", "floralwhite", "mintcream", "lightcyan2", "aquamarine4", "darkslategray")
+brgn <- c("darkgoldenrod", "darkgoldenrod3", "goldenrod", "papayawhip", "floralwhite", "mintcream", "lightcyan2", "darkslategray3", "darkslategray4")
 
 gnpu <- c("darkslategray", "aquamarine4", "lightcyan2", "mintcream", "white", "lavenderblush2", "thistle", "orchid4", "darkorchid4")
 gnbu <- c("darkslategray", "aquamarine4", "lightcyan2", "mintcream", "white", "aliceblue", "lightblue", "steelblue", "steelblue4")
 
 bu <- c("azure", "lightblue2", "steelblue", "steelblue4")
-brbu <- c("darkgoldenrod", "darkgoldenrod3", "goldenrod", "papayawhip", "floralwhite", "aliceblue", "lightblue", "steelblue", "steelblue4")
+brbu <- c("darkgoldenrod", "darkgoldenrod3", "goldenrod", "papayawhip", "white", "aliceblue", "lightblue", "steelblue", "steelblue4")
 
 bupu <- c("steelblue4", "steelblue", "lightblue", "aliceblue", "white", "lavenderblush2", "thistle", "orchid4", "darkorchid4")
 burd <- c("steelblue4", "steelblue", "lightblue", "aliceblue", "white", "mistyrose", "indianred", "firebrick", "firebrick4")
 
 rdpu <- c("seashell", "mistyrose", "lightpink2", "maroon", "maroon4", "darkorchid4", "purple4")
-brpu <- c("darkgoldenrod", "darkgoldenrod3", "goldenrod", "papayawhip", "linen", "lavenderblush2", "thistle", "orchid4", "darkorchid4")
+brpu <- c("darkgoldenrod", "darkgoldenrod3", "goldenrod", "papayawhip", "floralwhite", "lavenderblush2", "thistle", "orchid4", "darkorchid4")
 
 bvrv <- c("darkslateblue", "slateblue3", "slateblue2", "lavender", "white", "mistyrose", "lightpink", "maroon", "violetred4")
 bvbr <- c("darkslateblue", "slateblue3", "slateblue2", "lavender", "floralwhite", "papayawhip", "goldenrod", "darkgoldenrod3", "darkgoldenrod")
