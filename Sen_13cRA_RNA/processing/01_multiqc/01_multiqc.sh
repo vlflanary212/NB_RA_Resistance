@@ -10,6 +10,8 @@
 #SBATCH --mem=4G
 #SBATCH --output=%x_%A_%a.out
 #SBATCH --error=%x_%A_%a.err
+#SBATCH --mail-user=flanary@uab.edu
+#SBATCH --mail-type=ALL
 
 ##### VARIABLES #####
 fastqc_output="/data/scratch/flanary/Sen_13cRA_RNA/fastqc"

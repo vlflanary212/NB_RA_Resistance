@@ -1,0 +1,71 @@
+---
+title: "Rename Fastqs"
+author: "Victoria Flanary"
+date: "2025-01-06"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Objective
+Creating mapping file to rename the fastq files in the Sen_RNA_cRA directory by 
+cell line.
+
+# Set-up
+```{r load packages}
+library(rstudioapi)
+library(here)
+library(styler)
+library(lintr)
+```
+
+# Create mapping file
+```{r}
+prefixes <- paste0(paste0("AS", 1:10), paste0("_S", 19:28))
+  
+mapping_df <- data.frame(
+  prefixes <- prefixes,
+  cell_line <- c("IMR5_rep1", "IMR5_rep2", "SHEP_rep1", "SHEP_rep2", 
+                 "SKNAS_rep1", "SKNAS_rep2", "SY5Y_rep1", "SY5Y_rep2", 
+                 "FOXJ3_siRNA", "BE2C_neg_control")
+)
+```
+
+```{r}
+write.table(
+  mapping_df,
+  here("Sen_13cRA_RNA", "processing", "02_alignment", "mapping.txt"),
+  sep = "\t",
+  row.names = FALSE,
+  col.names = FALSE,
+  quote = FALSE
+)
+```
+
+# List of cell lines
+```{r}
+ra_samples <- setdiff(cell_line, c("FOXJ3_siRNA", "BE2C_neg_control"))
+  
+write.table(
+  ra_samples,
+  here("Sen_13cRA_RNA", "processing", "03_alignment", "samples.txt"),
+  sep = "\t",
+  row.names = FALSE,
+  col.names = FALSE,
+  quote = FALSE
+)
+```
+
+# End of script
+```{r style code}
+script <- rstudioapi::getSourceEditorContext()$path
+style_file(script)
+lint(script)
+```
+
+```{r clean environment}
+rm(list = ls())
+gc()
+```

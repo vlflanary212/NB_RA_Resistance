@@ -9,8 +9,8 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=4G
 #SBATCH --array=0-19
-#SBATCH --output=%x_%A_%a.out
-#SBATCH --error=%x_%A_%a.err
+#SBATCH --mail-user=flanary@uab.edu
+#SBATCH --mail-type=ALL
 
 ##### VARIABLES #####
 fastq_dir="/data/project/sen-lab/internal/2024_12_17/Sen_RNA_cRA"

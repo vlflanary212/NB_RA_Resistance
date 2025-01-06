@@ -1,0 +1,12 @@
+line1:SKNAS_rep1
+Processing sample SKNAS_rep1
+Using STAR index: /data/project/sen-lab/genome/hg38/star_index
+FASTQ files: /data/scratch/flanary/Sen_13cRA_RNA/fastq/.fastq.gz, /data/scratch/flanary/Sen_13cRA_RNA/fastq/.fastq.gz
+Jan 06 14:54:32 ..... started STAR run
+Jan 06 14:54:32 ..... loading genome
+Jan 06 14:54:55 ..... started mapping
+Jan 06 15:05:32 ..... finished mapping
+Jan 06 15:05:33 ..... started sorting BAM
+Jan 06 15:06:37 ..... finished successfully
+Aligned files for SKNAS_rep1 are in: /data/scratch/flanary/Sen_13cRA_RNA/bam/SKNAS_rep1
+STAR alignment complete
