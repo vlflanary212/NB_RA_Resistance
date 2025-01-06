@@ -1,0 +1,17 @@
+Module	Section	Sample Name	Source
+FastQC	all_sections	SHEP2_S32_R2_001	/data/scratch/flanary/Sen_13cRA_ATAC/fastqc/SHEP2_S32_R2_001_fastqc.zip
+FastQC	all_sections	SY5Y_1_S35_R1_001	/data/scratch/flanary/Sen_13cRA_ATAC/fastqc/SY5Y_1_S35_R1_001_fastqc.zip
+FastQC	all_sections	IMR5_2_S30_R2_001	/data/scratch/flanary/Sen_13cRA_ATAC/fastqc/IMR5_2_S30_R2_001_fastqc.zip
+FastQC	all_sections	SKNAS2_S34_R1_001	/data/scratch/flanary/Sen_13cRA_ATAC/fastqc/SKNAS2_S34_R1_001_fastqc.zip
+FastQC	all_sections	SY5Y_2_S36_R1_001	/data/scratch/flanary/Sen_13cRA_ATAC/fastqc/SY5Y_2_S36_R1_001_fastqc.zip
+FastQC	all_sections	SHEP1_S31_R2_001	/data/scratch/flanary/Sen_13cRA_ATAC/fastqc/SHEP1_S31_R2_001_fastqc.zip
+FastQC	all_sections	SKNAS1_S33_R2_001	/data/scratch/flanary/Sen_13cRA_ATAC/fastqc/SKNAS1_S33_R2_001_fastqc.zip
+FastQC	all_sections	SY5Y_1_S35_R2_001	/data/scratch/flanary/Sen_13cRA_ATAC/fastqc/SY5Y_1_S35_R2_001_fastqc.zip
+FastQC	all_sections	IMR5_1_S29_R1_001	/data/scratch/flanary/Sen_13cRA_ATAC/fastqc/IMR5_1_S29_R1_001_fastqc.zip
+FastQC	all_sections	IMR5_2_S30_R1_001	/data/scratch/flanary/Sen_13cRA_ATAC/fastqc/IMR5_2_S30_R1_001_fastqc.zip
+FastQC	all_sections	SY5Y_2_S36_R2_001	/data/scratch/flanary/Sen_13cRA_ATAC/fastqc/SY5Y_2_S36_R2_001_fastqc.zip
+FastQC	all_sections	SHEP1_S31_R1_001	/data/scratch/flanary/Sen_13cRA_ATAC/fastqc/SHEP1_S31_R1_001_fastqc.zip
+FastQC	all_sections	SKNAS2_S34_R2_001	/data/scratch/flanary/Sen_13cRA_ATAC/fastqc/SKNAS2_S34_R2_001_fastqc.zip
+FastQC	all_sections	IMR5_1_S29_R2_001	/data/scratch/flanary/Sen_13cRA_ATAC/fastqc/IMR5_1_S29_R2_001_fastqc.zip
+FastQC	all_sections	SHEP2_S32_R1_001	/data/scratch/flanary/Sen_13cRA_ATAC/fastqc/SHEP2_S32_R1_001_fastqc.zip
+FastQC	all_sections	SKNAS1_S33_R1_001	/data/scratch/flanary/Sen_13cRA_ATAC/fastqc/SKNAS1_S33_R1_001_fastqc.zip

@@ -1,0 +1,21 @@
+Sample	adapter_content	Sequences flagged as poor quality	sequence_duplication_levels	avg_sequence_length	Encoding	per_base_sequence_quality	sequence_length_distribution	Sequence length	File type	basic_statistics	per_sequence_gc_content	Total Sequences	per_base_n_content	per_base_sequence_content	overrepresented_sequences	%GC	total_deduplicated_percentage	Filename	per_tile_sequence_quality	per_sequence_quality_scores
+AS10_S28_R1_001	pass	0.0	fail	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	51409907.0	pass	warn	warn	48.0	33.2173813308	AS10_S28_R1_001.fastq.gz	pass	pass
+AS10_S28_R2_001	pass	0.0	fail	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	51409907.0	pass	warn	pass	49.0	31.9256557872	AS10_S28_R2_001.fastq.gz	pass	pass
+AS1_S19_R1_001	pass	0.0	fail	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	warn	43808923.0	pass	warn	warn	50.0	38.4454735197	AS1_S19_R1_001.fastq.gz	pass	pass
+AS1_S19_R2_001	pass	0.0	fail	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	43808923.0	pass	warn	warn	50.0	38.082780695	AS1_S19_R2_001.fastq.gz	pass	pass
+AS2_S20_R1_001	pass	0.0	fail	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	30482349.0	pass	warn	pass	48.0	35.1045569006	AS2_S20_R1_001.fastq.gz	pass	pass
+AS2_S20_R2_001	pass	0.0	fail	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	30482349.0	pass	warn	pass	49.0	34.0234822961	AS2_S20_R2_001.fastq.gz	pass	pass
+AS3_S21_R1_001	pass	0.0	fail	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	warn	22498888.0	pass	warn	warn	50.0	42.1815882677	AS3_S21_R1_001.fastq.gz	pass	pass
+AS3_S21_R2_001	pass	0.0	fail	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	warn	22498888.0	pass	warn	warn	51.0	41.124584846	AS3_S21_R2_001.fastq.gz	pass	pass
+AS4_S22_R1_001	pass	0.0	fail	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	16816450.0	pass	warn	warn	48.0	39.9308071387	AS4_S22_R1_001.fastq.gz	pass	pass
+AS4_S22_R2_001	pass	0.0	fail	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	16816450.0	pass	warn	pass	49.0	38.772554649	AS4_S22_R2_001.fastq.gz	pass	pass
+AS5_S23_R1_001	pass	0.0	fail	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	warn	38254966.0	pass	warn	warn	52.0	41.6596442373	AS5_S23_R1_001.fastq.gz	pass	pass
+AS5_S23_R2_001	pass	0.0	fail	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	38254966.0	pass	warn	warn	52.0	41.3284863848	AS5_S23_R2_001.fastq.gz	pass	pass
+AS6_S24_R1_001	pass	0.0	fail	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	26084604.0	pass	warn	warn	48.0	37.154326235	AS6_S24_R1_001.fastq.gz	pass	pass
+AS6_S24_R2_001	pass	0.0	fail	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	26084604.0	pass	warn	pass	48.0	35.55181008	AS6_S24_R2_001.fastq.gz	pass	pass
+AS7_S25_R1_001	pass	0.0	fail	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	26029501.0	pass	warn	warn	49.0	41.4426857505	AS7_S25_R1_001.fastq.gz	pass	pass
+AS7_S25_R2_001	pass	0.0	fail	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	26029501.0	pass	warn	pass	49.0	41.1708215137	AS7_S25_R2_001.fastq.gz	pass	pass
+AS8_S26_R1_001	pass	0.0	fail	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	38665078.0	pass	warn	warn	48.0	30.6987080323	AS8_S26_R1_001.fastq.gz	pass	pass
+AS8_S26_R2_001	pass	0.0	fail	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	38665078.0	pass	warn	pass	49.0	29.9772061091	AS8_S26_R2_001.fastq.gz	pass	pass
+AS9_S27_R1_001	pass	0.0	fail	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	50068457.0	pass	warn	warn	48.0	33.1088429998	AS9_S27_R1_001.fastq.gz	pass	pass
+AS9_S27_R2_001	pass	0.0	fail	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	50068457.0	pass	warn	pass	48.0	31.9609160081	AS9_S27_R2_001.fastq.gz	pass	pass

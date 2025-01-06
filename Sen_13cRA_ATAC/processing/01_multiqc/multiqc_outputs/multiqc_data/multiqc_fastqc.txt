@@ -1,0 +1,17 @@
+Sample	adapter_content	Sequences flagged as poor quality	sequence_duplication_levels	avg_sequence_length	Encoding	per_base_sequence_quality	sequence_length_distribution	Sequence length	File type	basic_statistics	per_sequence_gc_content	Total Sequences	per_base_n_content	per_base_sequence_content	overrepresented_sequences	%GC	total_deduplicated_percentage	Filename	per_tile_sequence_quality	per_sequence_quality_scores
+IMR5_1_S29_R1_001	fail	0.0	fail	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	209780575.0	pass	fail	pass	47.0	49.7611425634	IMR5_1_S29_R1_001.fastq.gz	pass	pass
+IMR5_1_S29_R2_001	fail	0.0	warn	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	209780575.0	pass	fail	pass	47.0	50.4640102467	IMR5_1_S29_R2_001.fastq.gz	pass	pass
+IMR5_2_S30_R1_001	fail	0.0	pass	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	warn	90273666.0	pass	fail	pass	49.0	77.4081415656	IMR5_2_S30_R1_001.fastq.gz	pass	pass
+IMR5_2_S30_R2_001	fail	0.0	pass	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	warn	90273666.0	pass	fail	pass	49.0	77.8151848869	IMR5_2_S30_R2_001.fastq.gz	pass	pass
+SHEP1_S31_R1_001	fail	0.0	warn	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	187394497.0	pass	fail	pass	48.0	52.0840582367	SHEP1_S31_R1_001.fastq.gz	pass	pass
+SHEP1_S31_R2_001	fail	0.0	warn	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	187394497.0	pass	fail	pass	49.0	52.8464298042	SHEP1_S31_R2_001.fastq.gz	pass	pass
+SHEP2_S32_R1_001	fail	0.0	warn	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	161673971.0	pass	fail	pass	48.0	54.0478311918	SHEP2_S32_R1_001.fastq.gz	pass	pass
+SHEP2_S32_R2_001	fail	0.0	warn	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	161673971.0	pass	fail	pass	48.0	54.858369633	SHEP2_S32_R2_001.fastq.gz	pass	pass
+SKNAS1_S33_R1_001	fail	0.0	warn	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	188200803.0	pass	fail	pass	48.0	56.3108974733	SKNAS1_S33_R1_001.fastq.gz	pass	pass
+SKNAS1_S33_R2_001	fail	0.0	warn	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	188200803.0	pass	fail	pass	48.0	56.7596609981	SKNAS1_S33_R2_001.fastq.gz	pass	pass
+SKNAS2_S34_R1_001	fail	0.0	warn	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	warn	172539565.0	pass	fail	pass	49.0	62.6265444017	SKNAS2_S34_R1_001.fastq.gz	pass	pass
+SKNAS2_S34_R2_001	fail	0.0	warn	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	172539565.0	pass	fail	pass	48.0	62.5781148827	SKNAS2_S34_R2_001.fastq.gz	pass	pass
+SY5Y_1_S35_R1_001	fail	0.0	fail	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	331040711.0	pass	fail	pass	47.0	48.5621452834	SY5Y_1_S35_R1_001.fastq.gz	pass	pass
+SY5Y_1_S35_R2_001	fail	0.0	fail	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	331040711.0	pass	fail	pass	47.0	48.4008736551	SY5Y_1_S35_R2_001.fastq.gz	pass	pass
+SY5Y_2_S36_R1_001	fail	0.0	fail	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	253380315.0	pass	fail	pass	47.0	46.2027543466	SY5Y_2_S36_R1_001.fastq.gz	pass	pass
+SY5Y_2_S36_R2_001	fail	0.0	fail	101.0	Sanger / Illumina 1.9	pass	pass	101.0	Conventional base calls	pass	pass	253380315.0	pass	fail	pass	48.0	46.9032038767	SY5Y_2_S36_R2_001.fastq.gz	pass	pass

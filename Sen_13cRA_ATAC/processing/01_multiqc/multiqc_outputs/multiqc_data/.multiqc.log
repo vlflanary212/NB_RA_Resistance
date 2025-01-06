@@ -1,0 +1,47 @@
+[2025-01-06 11:56:11,300] multiqc                                            [DEBUG  ]  No MultiQC config found: /data/rc/apps/ngs-ccts/MultiQC/0.8/lib/python2.7/site-packages/multiqc_config.yaml
+[2025-01-06 11:56:11,300] multiqc                                            [DEBUG  ]  No MultiQC config found: /home/flanary/.multiqc_config.yaml
+[2025-01-06 11:56:11,300] multiqc                                            [DEBUG  ]  No MultiQC config found: multiqc_config.yaml
+[2025-01-06 11:56:11,300] multiqc                                            [DEBUG  ]  No MultiQC config found: /data/rc/apps/ngs-ccts/MultiQC/0.8/lib/python2.7/site-packages/multiqc_config.yaml
+[2025-01-06 11:56:11,300] multiqc                                            [DEBUG  ]  No MultiQC config found: /home/flanary/.multiqc_config.yaml
+[2025-01-06 11:56:11,300] multiqc                                            [DEBUG  ]  No MultiQC config found: multiqc_config.yaml
+[2025-01-06 11:56:11,300] multiqc                                            [DEBUG  ]  Command used: /share/apps/ngs-ccts/MultiQC/0.8/bin/multiqc -v /data/scratch/flanary/Sen_13cRA_ATAC/fastqc -o /data/scratch/flanary/Sen_13cRA_ATAC/multiqc
+[2025-01-06 11:56:11,300] multiqc                                            [DEBUG  ]  Could not connect to multiqc.info for version check
+[2025-01-06 11:56:11,301] multiqc                                            [INFO   ]  This is MultiQC v0.8
+[2025-01-06 11:56:11,301] multiqc                                            [DEBUG  ]  Command     : /share/apps/ngs-ccts/MultiQC/0.8/bin/multiqc -v /data/scratch/flanary/Sen_13cRA_ATAC/fastqc -o /data/scratch/flanary/Sen_13cRA_ATAC/multiqc
+[2025-01-06 11:56:11,301] multiqc                                            [DEBUG  ]  Working dir : /data/user/home/flanary/Projects/RA_Resistance/Sen_13cRA_ATAC/processing
+[2025-01-06 11:56:11,301] multiqc                                            [INFO   ]  Template    : default
+[2025-01-06 11:56:11,301] multiqc                                            [INFO   ]  Searching '/data/scratch/flanary/Sen_13cRA_ATAC/fastqc'
+[2025-01-06 11:56:11,301] multiqc                                            [DEBUG  ]  Analysing modules: gatk, quast, snpeff, qualimap, bcftools, featureCounts, methylQA, rseqc, picard, preseq, samblaster, samtools, bamtools, bismark, hicup, salmon, kallisto, star, tophat, bowtie2, bowtie1, cutadapt, trimmomatic, skewer, fastq_screen, fastqc
+[2025-01-06 11:56:11,302] multiqc                                            [DEBUG  ]  Using temporary directory for creating report: /scratch/local/tmp1x2XxU
+[2025-01-06 11:56:12,755] multiqc.modules.gatk.gatk                          [DEBUG  ]  Could not find any reports in ('/data/scratch/flanary/Sen_13cRA_ATAC/fastqc',)
+[2025-01-06 11:56:12,794] multiqc.modules.quast.quast                        [DEBUG  ]  Could not find any reports in ('/data/scratch/flanary/Sen_13cRA_ATAC/fastqc',)
+[2025-01-06 11:56:12,865] multiqc.modules.snpeff.snpeff                      [DEBUG  ]  Could not find any data in ('/data/scratch/flanary/Sen_13cRA_ATAC/fastqc',)
+[2025-01-06 11:56:12,933] multiqc.modules.qualimap.qualimap                  [DEBUG  ]  Could not find any reports in ('/data/scratch/flanary/Sen_13cRA_ATAC/fastqc',)
+[2025-01-06 11:56:13,003] multiqc.modules.bcftools.bcftools                  [DEBUG  ]  Could not find any reports in ('/data/scratch/flanary/Sen_13cRA_ATAC/fastqc',)
+[2025-01-06 11:56:13,015] multiqc.modules.featureCounts.feature_counts       [DEBUG  ]  Could not find any reports in ('/data/scratch/flanary/Sen_13cRA_ATAC/fastqc',)
+[2025-01-06 11:56:13,039] multiqc.modules.methylQA.methylQA                  [DEBUG  ]  Could not find any reports in ('/data/scratch/flanary/Sen_13cRA_ATAC/fastqc',)
+[2025-01-06 11:56:13,315] multiqc.modules.rseqc.rseqc                        [DEBUG  ]  Could not find any reports in ('/data/scratch/flanary/Sen_13cRA_ATAC/fastqc',)
+[2025-01-06 11:56:13,814] multiqc.modules.picard.picard                      [DEBUG  ]  Could not find any reports in ('/data/scratch/flanary/Sen_13cRA_ATAC/fastqc',)
+[2025-01-06 11:56:13,870] multiqc.modules.preseq.preseq                      [DEBUG  ]  Could not find any preseq data in ('/data/scratch/flanary/Sen_13cRA_ATAC/fastqc',)
+[2025-01-06 11:56:13,950] multiqc.modules.samblaster.samblaster              [DEBUG  ]  Could not find any data in ('/data/scratch/flanary/Sen_13cRA_ATAC/fastqc',)
+[2025-01-06 11:56:14,124] multiqc.modules.samtools.samtools                  [DEBUG  ]  Could not find any reports in ('/data/scratch/flanary/Sen_13cRA_ATAC/fastqc',)
+[2025-01-06 11:56:14,198] multiqc.modules.bamtools.bamtools                  [DEBUG  ]  Could not find any reports in ('/data/scratch/flanary/Sen_13cRA_ATAC/fastqc',)
+[2025-01-06 11:56:14,221] multiqc.modules.bismark.bismark                    [DEBUG  ]  Could not find any reports in ('/data/scratch/flanary/Sen_13cRA_ATAC/fastqc',)
+[2025-01-06 11:56:14,241] multiqc.modules.hicup.hicup                        [DEBUG  ]  Could not find any HiCUP data in ('/data/scratch/flanary/Sen_13cRA_ATAC/fastqc',)
+[2025-01-06 11:56:14,249] multiqc.modules.salmon.salmon                      [DEBUG  ]  Could not find any Salmon data in ('/data/scratch/flanary/Sen_13cRA_ATAC/fastqc',)
+[2025-01-06 11:56:14,323] multiqc.modules.kallisto.kallisto                  [DEBUG  ]  Could not find any reports in ('/data/scratch/flanary/Sen_13cRA_ATAC/fastqc',)
+[2025-01-06 11:56:14,335] multiqc.modules.star.star                          [DEBUG  ]  Could not find any reports in ('/data/scratch/flanary/Sen_13cRA_ATAC/fastqc',)
+[2025-01-06 11:56:14,351] multiqc.modules.tophat.tophat                      [DEBUG  ]  Could not find any reports in ('/data/scratch/flanary/Sen_13cRA_ATAC/fastqc',)
+[2025-01-06 11:56:14,414] multiqc.modules.bowtie2.bowtie2                    [DEBUG  ]  Could not find any reports in ('/data/scratch/flanary/Sen_13cRA_ATAC/fastqc',)
+[2025-01-06 11:56:14,488] multiqc.modules.bowtie1.bowtie1                    [DEBUG  ]  Could not find any reports in ('/data/scratch/flanary/Sen_13cRA_ATAC/fastqc',)
+[2025-01-06 11:56:14,552] multiqc.modules.cutadapt.cutadapt                  [DEBUG  ]  Could not find any reports in ('/data/scratch/flanary/Sen_13cRA_ATAC/fastqc',)
+[2025-01-06 11:56:14,629] multiqc.modules.trimmomatic.trimmomatic            [DEBUG  ]  Could not find any Trimmomatic data in ('/data/scratch/flanary/Sen_13cRA_ATAC/fastqc',)
+[2025-01-06 11:56:14,701] multiqc.modules.skewer.skewer                      [DEBUG  ]  Could not find any data in ('/data/scratch/flanary/Sen_13cRA_ATAC/fastqc',)
+[2025-01-06 11:56:14,719] multiqc.modules.fastq_screen.fastq_screen          [DEBUG  ]  Could not find any reports in ('/data/scratch/flanary/Sen_13cRA_ATAC/fastqc',)
+[2025-01-06 11:56:21,075] multiqc.modules.fastqc.fastqc                      [INFO   ]  Found 16 reports
+[2025-01-06 11:56:21,644] multiqc                                            [INFO   ]  Report      : ../../../../../../../scratch/flanary/Sen_13cRA_ATAC/multiqc/multiqc_report.html
+[2025-01-06 11:56:21,645] multiqc                                            [INFO   ]  Data        : ../../../../../../../scratch/flanary/Sen_13cRA_ATAC/multiqc/multiqc_data
+[2025-01-06 11:56:21,645] multiqc                                            [DEBUG  ]  Moving data file from '/scratch/local/tmp1x2XxU/multiqc_data/multiqc_fastqc.txt' to '/data/scratch/flanary/Sen_13cRA_ATAC/multiqc/multiqc_data'
+[2025-01-06 11:56:21,645] multiqc                                            [DEBUG  ]  Moving data file from '/scratch/local/tmp1x2XxU/multiqc_data/multiqc_general_stats.txt' to '/data/scratch/flanary/Sen_13cRA_ATAC/multiqc/multiqc_data'
+[2025-01-06 11:56:21,646] multiqc                                            [DEBUG  ]  Moving data file from '/scratch/local/tmp1x2XxU/multiqc_data/multiqc_sources.txt' to '/data/scratch/flanary/Sen_13cRA_ATAC/multiqc/multiqc_data'
+[2025-01-06 11:56:22,231] multiqc                                            [INFO   ]  MultiQC complete
