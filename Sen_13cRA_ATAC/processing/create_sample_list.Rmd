@@ -1,0 +1,63 @@
+---
+title: "Sample File"
+author: "Victoria Flanary"
+date: "2025-01-06"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Objective
+Create a text file with the names of the 13cRA-treated ATAC-seq samples, as 
+given in the first part of the fastq file names.
+
+# Set-up
+```{r load packages}
+library(rstudioapi)
+library(here)
+library(styler)
+library(lintr)
+```
+
+# Create file
+```{r format sample names}
+samples <- c("IMR5_1", "IMR5_2", "SHEP1", "SHEP2", "SKNAS1", "SKNAS2",
+             "SY5Y_1", "SY5Y_2")
+seq_num <- paste0("_S", 29:36)
+prefixes <- paste0(samples, seq_num)
+prefixes_dup <- rep(prefixes, each = 2)
+```
+
+```{r save the sample list}
+write.table(
+  prefixes,
+  here("Sen_13cRA_ATAC", "processing", "samples.txt"),
+  row.names = FALSE,
+  col.names = FALSE,
+  quote = FALSE
+)
+```
+
+```{r}
+write.table(
+  prefixes_dup,
+  here("Sen_13cRA_ATAC", "processing", "samples_duplicated.txt"),
+  row.names = FALSE,
+  col.names = FALSE,
+  quote = FALSE
+)
+```
+
+# End of script
+```{r style code}
+script <- rstudioapi::getSourceEditorContext()$path
+style_file(script)
+lint(script)
+```
+
+```{r clean environment}
+rm(list = ls())
+gc()
+```

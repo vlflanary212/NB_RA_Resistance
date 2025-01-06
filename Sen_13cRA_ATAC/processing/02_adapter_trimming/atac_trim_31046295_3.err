@@ -1,0 +1,401 @@
+/cm/local/apps/slurm/var/spool/job31046298/slurm_script: line 20: /home/flanary/miniconda3/etc/profile.d/conda.sh: No such file or directory
+Path to Cutadapt set as: 'cutadapt' (default)
+Cutadapt seems to be working fine (tested command 'cutadapt --version')
+Cutadapt version: 2.6
+Could not detect version of Python used by Cutadapt from the first line of Cutadapt (but found this: >>>#!/bin/sh<<<)
+Letting the (modified) Cutadapt deal with the Python version instead
+Parallel gzip (pigz) detected. Proceeding with multicore (de)compression using 8 cores
+
+Proceeding with 'pigz -p 4' for decompression
+To decrease CPU usage of decompression, please install 'igzip' and run again
+
+No quality encoding type selected. Assuming that the data provided uses Sanger encoded Phred scores (default)
+
+Output will be written into the directory: /scratch/flanary/Sen_13cRA_ATAC/trimmed_fastq/
+
+
+AUTO-DETECTING ADAPTER TYPE
+===========================
+Attempting to auto-detect adapter type from the first 1 million sequences of the first file (>> /data/project/sen-lab/internal/2024_12_17/Sen_ATAC_cRA/SHEP1_S31_R1_001.fastq.gz <<)
+
+Found perfect matches for the following adapter sequences:
+Adapter type	Count	Sequence	Sequences analysed	Percentage
+Nextera	371654	CTGTCTCTTATA	1000000	37.17
+Illumina	0	AGATCGGAAGAGC	1000000	0.00
+smallRNA	0	TGGAATTCTCGG	1000000	0.00
+Using Nextera adapter for trimming (count: 371654). Second best hit was Illumina (count: 0)
+
+Writing report to '/scratch/flanary/Sen_13cRA_ATAC/trimmed_fastq/SHEP1_S31_R1_001.fastq.gz_trimming_report.txt'
+
+SUMMARISING RUN PARAMETERS
+==========================
+Input filename: /data/project/sen-lab/internal/2024_12_17/Sen_ATAC_cRA/SHEP1_S31_R1_001.fastq.gz
+Trimming mode: paired-end
+Trim Galore version: 0.6.10
+Cutadapt version: 2.6
+Python version: could not detect
+Number of cores used for trimming: 8
+Quality Phred score cutoff: 20
+Quality encoding type selected: ASCII+33
+Adapter sequence: 'CTGTCTCTTATA' (Nextera Transposase sequence; auto-detected)
+Maximum trimming error rate: 0.1 (default)
+Minimum required adapter overlap (stringency): 1 bp
+Minimum required sequence length for both reads before a sequence pair gets removed: 20 bp
+Output file(s) will be GZIP compressed
+
+Cutadapt seems to be fairly up-to-date (version 2.6). Setting -j 8
+Writing final adapter and quality trimmed output to SHEP1_S31_R1_001_trimmed.fq.gz
+
+
+  >>> Now performing quality (cutoff '-q 20') and adapter trimming in a single pass for the adapter sequence: 'CTGTCTCTTATA' from file /data/project/sen-lab/internal/2024_12_17/Sen_ATAC_cRA/SHEP1_S31_R1_001.fastq.gz <<< 
+10000000 sequences processed
+20000000 sequences processed
+30000000 sequences processed
+40000000 sequences processed
+50000000 sequences processed
+60000000 sequences processed
+70000000 sequences processed
+80000000 sequences processed
+90000000 sequences processed
+100000000 sequences processed
+110000000 sequences processed
+120000000 sequences processed
+130000000 sequences processed
+140000000 sequences processed
+150000000 sequences processed
+160000000 sequences processed
+170000000 sequences processed
+180000000 sequences processed
+This is cutadapt 2.6 with Python 3.7.16
+Command line parameters: -j 8 -e 0.1 -q 20 -O 1 -a CTGTCTCTTATA /data/project/sen-lab/internal/2024_12_17/Sen_ATAC_cRA/SHEP1_S31_R1_001.fastq.gz
+Processing reads on 8 cores in single-end mode ...
+Finished in 661.35 s (4 us/read; 17.00 M reads/minute).
+
+=== Summary ===
+
+Total reads processed:             187,394,497
+Reads with adapters:               116,904,421 (62.4%)
+Reads written (passing filters):   187,394,497 (100.0%)
+
+Total basepairs processed: 18,926,844,197 bp
+Quality-trimmed:              44,897,362 bp (0.2%)
+Total written (filtered):  15,843,770,471 bp (83.7%)
+
+=== Adapter 1 ===
+
+Sequence: CTGTCTCTTATA; Type: regular 3'; Length: 12; Trimmed: 116904421 times.
+
+No. of allowed errors:
+0-9 bp: 0; 10-12 bp: 1
+
+Bases preceding removed adapters:
+  A: 12.9%
+  C: 41.0%
+  G: 25.8%
+  T: 20.3%
+  none/other: 0.0%
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+1	25127558	46848624.2	0	25127558
+2	8382306	11712156.1	0	8382306
+3	3164264	2928039.0	0	3164264
+4	1431883	732009.8	0	1431883
+5	1079106	183002.4	0	1079106
+6	1021026	45750.6	0	1021026
+7	944643	11437.7	0	944643
+8	864371	2859.4	0	864371
+9	778780	714.9	0	771184 7596
+10	773217	178.7	1	753500 19717
+11	757045	44.7	1	734806 22239
+12	855958	11.2	1	822140 33818
+13	889577	11.2	1	858813 30764
+14	1070403	11.2	1	1028765 41638
+15	1118584	11.2	1	1077454 41130
+16	1272405	11.2	1	1219204 53201
+17	1109507	11.2	1	1071795 37712
+18	1042126	11.2	1	1005626 36500
+19	972636	11.2	1	939352 33284
+20	945244	11.2	1	911657 33587
+21	895630	11.2	1	861979 33651
+22	902557	11.2	1	872064 30493
+23	1070028	11.2	1	1029087 40941
+24	1143230	11.2	1	1104704 38526
+25	1280256	11.2	1	1233805 46451
+26	1356447	11.2	1	1306576 49871
+27	1362458	11.2	1	1312855 49603
+28	1330166	11.2	1	1280682 49484
+29	1259670	11.2	1	1213174 46496
+30	1087596	11.2	1	1051291 36305
+31	1069089	11.2	1	1029931 39158
+32	1009580	11.2	1	976656 32924
+33	1130245	11.2	1	1087379 42866
+34	1316944	11.2	1	1270473 46471
+35	1404509	11.2	1	1357478 47031
+36	1613247	11.2	1	1556416 56831
+37	1643358	11.2	1	1579172 64186
+38	1568427	11.2	1	1511137 57290
+39	1475767	11.2	1	1428075 47692
+40	1297547	11.2	1	1255237 42310
+41	1258464	11.2	1	1213595 44869
+42	1198620	11.2	1	1157844 40776
+43	1257524	11.2	1	1212754 44770
+44	1400636	11.2	1	1348356 52280
+45	1757092	11.2	1	1695553 61539
+46	1815316	11.2	1	1715953 99363
+47	3315077	11.2	1	3271555 43522
+48	603801	11.2	1	551220 52581
+49	1591523	11.2	1	1517277 74246
+50	2422489	11.2	1	2364126 58363
+51	1432542	11.2	1	1394892 37650
+52	966337	11.2	1	910374 55963
+53	1903865	11.2	1	1860197 43668
+54	1276468	11.2	1	1237094 39374
+55	1350007	11.2	1	1291508 58499
+56	2279617	11.2	1	2178349 101268
+57	3342295	11.2	1	3283741 58554
+58	1529915	11.2	1	1474607 55308
+59	1568005	11.2	1	1532882 35123
+60	984338	11.2	1	929225 55113
+61	1692551	11.2	1	1670006 22545
+62	437582	11.2	1	422632 14950
+63	378146	11.2	1	345436 32710
+64	1079281	11.2	1	1060282 18999
+65	400077	11.2	1	390120 9957
+66	146717	11.2	1	138069 8648
+67	161597	11.2	1	154427 7170
+68	179756	11.2	1	175431 4325
+69	33144	11.2	1	29709 3435
+70	69866	11.2	1	66903 2963
+71	77871	11.2	1	74401 3470
+72	92223	11.2	1	90546 1677
+73	5559	11.2	1	2571 2988
+74	9812	11.2	1	8004 1808
+75	19629	11.2	1	13118 6511
+76	4381	11.2	1	1996 2385
+77	1904	11.2	1	1013 891
+78	4392	11.2	1	1600 2792
+79	1645	11.2	1	590 1055
+80	3663	11.2	1	1875 1788
+81	1466	11.2	1	388 1078
+82	1976	11.2	1	1166 810
+83	2455	11.2	1	199 2256
+84	1103	11.2	1	297 806
+85	4325	11.2	1	106 4219
+86	1343	11.2	1	128 1215
+87	1055	11.2	1	82 973
+88	2486	11.2	1	61 2425
+89	964	11.2	1	52 912
+90	677	11.2	1	39 638
+91	1905	11.2	1	53 1852
+92	1322	11.2	1	257 1065
+93	3860	11.2	1	106 3754
+94	397	11.2	1	18 379
+95	591	11.2	1	13 578
+96	332	11.2	1	8 324
+97	796	11.2	1	6 790
+98	2608	11.2	1	43 2565
+99	616	11.2	1	14 602
+100	913	11.2	1	17 896
+101	2114	11.2	1	1591 523
+
+RUN STATISTICS FOR INPUT FILE: /data/project/sen-lab/internal/2024_12_17/Sen_ATAC_cRA/SHEP1_S31_R1_001.fastq.gz
+=============================================
+187394497 sequences processed in total
+The length threshold of paired-end sequences gets evaluated later on (in the validation step)
+
+Writing report to '/scratch/flanary/Sen_13cRA_ATAC/trimmed_fastq/SHEP1_S31_R2_001.fastq.gz_trimming_report.txt'
+
+SUMMARISING RUN PARAMETERS
+==========================
+Input filename: /data/project/sen-lab/internal/2024_12_17/Sen_ATAC_cRA/SHEP1_S31_R2_001.fastq.gz
+Trimming mode: paired-end
+Trim Galore version: 0.6.10
+Cutadapt version: 2.6
+Python version: could not detect
+Number of cores used for trimming: 8
+Quality Phred score cutoff: 20
+Quality encoding type selected: ASCII+33
+Adapter sequence: 'CTGTCTCTTATA' (Nextera Transposase sequence; auto-detected)
+Maximum trimming error rate: 0.1 (default)
+Minimum required adapter overlap (stringency): 1 bp
+Minimum required sequence length for both reads before a sequence pair gets removed: 20 bp
+Output file(s) will be GZIP compressed
+
+Cutadapt seems to be fairly up-to-date (version 2.6). Setting -j -j 8
+Writing final adapter and quality trimmed output to SHEP1_S31_R2_001_trimmed.fq.gz
+
+
+  >>> Now performing quality (cutoff '-q 20') and adapter trimming in a single pass for the adapter sequence: 'CTGTCTCTTATA' from file /data/project/sen-lab/internal/2024_12_17/Sen_ATAC_cRA/SHEP1_S31_R2_001.fastq.gz <<< 
+10000000 sequences processed
+20000000 sequences processed
+30000000 sequences processed
+40000000 sequences processed
+50000000 sequences processed
+60000000 sequences processed
+70000000 sequences processed
+80000000 sequences processed
+90000000 sequences processed
+100000000 sequences processed
+110000000 sequences processed
+120000000 sequences processed
+130000000 sequences processed
+140000000 sequences processed
+150000000 sequences processed
+160000000 sequences processed
+170000000 sequences processed
+180000000 sequences processed
+This is cutadapt 2.6 with Python 3.7.16
+Command line parameters: -j 8 -e 0.1 -q 20 -O 1 -a CTGTCTCTTATA /data/project/sen-lab/internal/2024_12_17/Sen_ATAC_cRA/SHEP1_S31_R2_001.fastq.gz
+Processing reads on 8 cores in single-end mode ...
+Finished in 675.44 s (4 us/read; 16.65 M reads/minute).
+
+=== Summary ===
+
+Total reads processed:             187,394,497
+Reads with adapters:               116,915,501 (62.4%)
+Reads written (passing filters):   187,394,497 (100.0%)
+
+Total basepairs processed: 18,926,844,197 bp
+Quality-trimmed:              31,360,608 bp (0.2%)
+Total written (filtered):  15,834,416,731 bp (83.7%)
+
+=== Adapter 1 ===
+
+Sequence: CTGTCTCTTATA; Type: regular 3'; Length: 12; Trimmed: 116915501 times.
+
+No. of allowed errors:
+0-9 bp: 0; 10-12 bp: 1
+
+Bases preceding removed adapters:
+  A: 12.8%
+  C: 41.2%
+  G: 25.8%
+  T: 20.2%
+  none/other: 0.0%
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+1	25185226	46848624.2	0	25185226
+2	8333479	11712156.1	0	8333479
+3	3211328	2928039.0	0	3211328
+4	1425659	732009.8	0	1425659
+5	1090810	183002.4	0	1090810
+6	1005309	45750.6	0	1005309
+7	951049	11437.7	0	951049
+8	860440	2859.4	0	860440
+9	780901	714.9	0	774328 6573
+10	771272	178.7	1	756068 15204
+11	758949	44.7	1	748393 10556
+12	846662	11.2	1	831554 15108
+13	895610	11.2	1	884188 11422
+14	1062302	11.2	1	1044190 18112
+15	1128239	11.2	1	1113330 14909
+16	1218901	11.2	1	1194989 23912
+17	1125656	11.2	1	1112300 13356
+18	1052680	11.2	1	1039853 12827
+19	989775	11.2	1	976699 13076
+20	920553	11.2	1	909571 10982
+21	892072	11.2	1	878136 13936
+22	943224	11.2	1	929704 13520
+23	1021164	11.2	1	1008799 12365
+24	1170647	11.2	1	1154456 16191
+25	1287008	11.2	1	1272456 14552
+26	1339149	11.2	1	1322449 16700
+27	1378800	11.2	1	1361759 17041
+28	1329271	11.2	1	1309734 19537
+29	1211579	11.2	1	1198333 13246
+30	1129854	11.2	1	1115979 13875
+31	1042249	11.2	1	1026767 15482
+32	1040735	11.2	1	1029789 10946
+33	1119234	11.2	1	1104674 14560
+34	1290231	11.2	1	1273808 16423
+35	1445352	11.2	1	1430968 14384
+36	1573953	11.2	1	1553992 19961
+37	1629025	11.2	1	1613009 16016
+38	1573595	11.2	1	1555229 18366
+39	1473717	11.2	1	1457125 16592
+40	1326962	11.2	1	1312735 14227
+41	1241583	11.2	1	1226486 15097
+42	1201471	11.2	1	1188922 12549
+43	1233429	11.2	1	1220226 13203
+44	1402741	11.2	1	1387985 14756
+45	1571543	11.2	1	1556762 14781
+46	1751179	11.2	1	1734009 17170
+47	1865463	11.2	1	1846294 19169
+48	1890300	11.2	1	1869735 20565
+49	1693285	11.2	1	1677845 15440
+50	1636934	11.2	1	1619902 17032
+51	1491261	11.2	1	1475855 15406
+52	1352507	11.2	1	1339181 13326
+53	1330874	11.2	1	1318481 12393
+54	1451534	11.2	1	1437206 14328
+55	1676571	11.2	1	1661129 15442
+56	1967413	11.2	1	1949563 17850
+57	1889416	11.2	1	1873674 15742
+58	1882815	11.2	1	1864779 18036
+59	1933584	11.2	1	1916560 17024
+60	1347066	11.2	1	1335182 11884
+61	1363883	11.2	1	1352518 11365
+62	1152825	11.2	1	1141625 11200
+63	977281	11.2	1	968485 8796
+64	801116	11.2	1	792632 8484
+65	806093	11.2	1	799010 7083
+66	325727	11.2	1	321939 3788
+67	188554	11.2	1	186274 2280
+68	111494	11.2	1	108159 3335
+69	84808	11.2	1	82758 2050
+70	63069	11.2	1	61369 1700
+71	66048	11.2	1	64697 1351
+72	90412	11.2	1	88977 1435
+73	92607	11.2	1	89247 3360
+74	69151	11.2	1	67501 1650
+75	30780	11.2	1	24646 6134
+76	5259	11.2	1	2866 2393
+77	2184	11.2	1	1301 883
+78	3025	11.2	1	286 2739
+79	1471	11.2	1	414 1057
+80	3483	11.2	1	1709 1774
+81	1449	11.2	1	376 1073
+82	1806	11.2	1	1104 702
+83	2252	11.2	1	187 2065
+84	1013	11.2	1	291 722
+85	4337	11.2	1	110 4227
+86	1269	11.2	1	140 1129
+87	1071	11.2	1	93 978
+88	2608	11.2	1	77 2531
+89	1050	11.2	1	59 991
+90	712	11.2	1	46 666
+91	1800	11.2	1	71 1729
+92	1279	11.2	1	264 1015
+93	3702	11.2	1	101 3601
+94	387	11.2	1	11 376
+95	636	11.2	1	15 621
+96	275	11.2	1	10 265
+97	759	11.2	1	15 744
+98	2694	11.2	1	45 2649
+99	556	11.2	1	19 537
+100	933	11.2	1	26 907
+101	2053	11.2	1	1824 229
+
+RUN STATISTICS FOR INPUT FILE: /data/project/sen-lab/internal/2024_12_17/Sen_ATAC_cRA/SHEP1_S31_R2_001.fastq.gz
+=============================================
+187394497 sequences processed in total
+The length threshold of paired-end sequences gets evaluated later on (in the validation step)
+
+Validate paired-end files SHEP1_S31_R1_001_trimmed.fq.gz and SHEP1_S31_R2_001_trimmed.fq.gz
+file_1: SHEP1_S31_R1_001_trimmed.fq.gz, file_2: SHEP1_S31_R2_001_trimmed.fq.gz
+
+
+>>>>> Now validing the length of the 2 paired-end infiles: SHEP1_S31_R1_001_trimmed.fq.gz and SHEP1_S31_R2_001_trimmed.fq.gz <<<<<
+Writing validated paired-end Read 1 reads to SHEP1_S31_R1_001_val_1.fq.gz
+Writing validated paired-end Read 2 reads to SHEP1_S31_R2_001_val_2.fq.gz
+
+Total number of sequences analysed: 187394497
+
+Number of sequence pairs removed because at least one read was shorter than the length cutoff (20 bp): 92515 (0.05%)
+
+Deleting both intermediate output files SHEP1_S31_R1_001_trimmed.fq.gz and SHEP1_S31_R2_001_trimmed.fq.gz
+
+====================================================================================================
+

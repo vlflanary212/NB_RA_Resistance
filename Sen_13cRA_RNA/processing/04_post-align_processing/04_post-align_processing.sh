@@ -2,8 +2,8 @@
 
 ##### SLURM #####
 #SBATCH --job-name=rna_samtools
-#SBATCH --partition=short
-#SBATCH --time=11:59:59
+#SBATCH --partition=medium
+#SBATCH --time=19:59:59
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
@@ -14,13 +14,14 @@
 #SBATCH --mail-user=flanary@uab.edu
 #SBATCH --mail-type=ALL
 
-###### ARRAY #######
-samples="/home/flanary/Projects/RA_Resistance/Sen_13cRA_RNA/processing/03_alignment/samples.txt"
-line1=$(sed -n "$SLURM_ARRAY_TASK_ID"p "$samples")
-echo "line1:$line1"
-
 ##### PACKAGES #####
 module load SAMtools/1.9-foss-2018b
+
+###### ARRAY #######
+wd="/home/flanary/Projects/RA_Resistance"
+samples=$wd/"Sen_13cRA_RNA/processing/03_alignment/samples.txt"
+line1=$(sed -n "$SLURM_ARRAY_TASK_ID"p "$samples")
+echo "line1:$line1"
 
 ##### VARIABLES #####
 bam_dir="/data/scratch/flanary/Sen_13cRA_RNA/bam"
@@ -37,7 +38,7 @@ samtools view -@ 8 -b -F 4 -q 20 $output/"$line1".Aligned.sortedByCoord.out.bam 
 samtools rmdup -@ 8 -S $output/$line1.bam $output/$line1.rmdup.bam
 
 # index
-samtools index -@ 8 $output/$line1.rmdup.bam
+samtools index -@ 8 $output/$line1.final.bam
 
 ##### END #####
 echo "Finish post-alignment processing with SAMtools"
