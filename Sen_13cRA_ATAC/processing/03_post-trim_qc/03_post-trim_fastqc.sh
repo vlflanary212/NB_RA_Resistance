@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ##### SLURM #####
-#SBATCH --job-name=fastqc_atac
+#SBATCH --job-name=trim_fastqc
 #SBATCH --partition=short
 #SBATCH --time=11:59:59
 #SBATCH --nodes=1
@@ -23,11 +23,12 @@ module load FastQC/0.11.9-Java-11
 
 ##### COMMANDS #####
 # Get a list of FASTQ files
-fastq_files=(${fastq_dir}/*.fastq.gz)
+fastq_files=(${fastq_dir}/*.fq.gz)
 
 # Get a single file for the current task
 fastq_file=${fastq_files[$SLURM_ARRAY_TASK_ID]}
-srun fastqc -o $fastqc_output "$fastq_file"
+
+srun fastqc -o "$fastqc_output" "$fastq_file"
 
 ##### END #####
 echo "done"

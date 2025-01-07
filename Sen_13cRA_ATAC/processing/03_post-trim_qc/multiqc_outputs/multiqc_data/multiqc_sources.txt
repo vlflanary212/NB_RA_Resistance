@@ -1,0 +1,17 @@
+Module	Section	Sample Name	Source
+FastQC	all_sections	IMR5_2_S30_R2_001_val_2	/data/scratch/flanary/Sen_13cRA_ATAC/trimmed_qc/fastqc/IMR5_2_S30_R2_001_val_2_fastqc.zip
+FastQC	all_sections	SHEP2_S32_R1_001_val_1	/data/scratch/flanary/Sen_13cRA_ATAC/trimmed_qc/fastqc/SHEP2_S32_R1_001_val_1_fastqc.zip
+FastQC	all_sections	SY5Y_1_S35_R2_001_val_2	/data/scratch/flanary/Sen_13cRA_ATAC/trimmed_qc/fastqc/SY5Y_1_S35_R2_001_val_2_fastqc.zip
+FastQC	all_sections	SKNAS1_S33_R1_001_val_1	/data/scratch/flanary/Sen_13cRA_ATAC/trimmed_qc/fastqc/SKNAS1_S33_R1_001_val_1_fastqc.zip
+FastQC	all_sections	SHEP2_S32_R2_001_val_2	/data/scratch/flanary/Sen_13cRA_ATAC/trimmed_qc/fastqc/SHEP2_S32_R2_001_val_2_fastqc.zip
+FastQC	all_sections	SY5Y_1_S35_R1_001_val_1	/data/scratch/flanary/Sen_13cRA_ATAC/trimmed_qc/fastqc/SY5Y_1_S35_R1_001_val_1_fastqc.zip
+FastQC	all_sections	SKNAS2_S34_R1_001_val_1	/data/scratch/flanary/Sen_13cRA_ATAC/trimmed_qc/fastqc/SKNAS2_S34_R1_001_val_1_fastqc.zip
+FastQC	all_sections	SKNAS2_S34_R2_001_val_2	/data/scratch/flanary/Sen_13cRA_ATAC/trimmed_qc/fastqc/SKNAS2_S34_R2_001_val_2_fastqc.zip
+FastQC	all_sections	SY5Y_2_S36_R1_001_val_1	/data/scratch/flanary/Sen_13cRA_ATAC/trimmed_qc/fastqc/SY5Y_2_S36_R1_001_val_1_fastqc.zip
+FastQC	all_sections	IMR5_2_S30_R1_001_val_1	/data/scratch/flanary/Sen_13cRA_ATAC/trimmed_qc/fastqc/IMR5_2_S30_R1_001_val_1_fastqc.zip
+FastQC	all_sections	SY5Y_2_S36_R2_001_val_2	/data/scratch/flanary/Sen_13cRA_ATAC/trimmed_qc/fastqc/SY5Y_2_S36_R2_001_val_2_fastqc.zip
+FastQC	all_sections	SKNAS1_S33_R2_001_val_2	/data/scratch/flanary/Sen_13cRA_ATAC/trimmed_qc/fastqc/SKNAS1_S33_R2_001_val_2_fastqc.zip
+FastQC	all_sections	SHEP1_S31_R1_001_val_1	/data/scratch/flanary/Sen_13cRA_ATAC/trimmed_qc/fastqc/SHEP1_S31_R1_001_val_1_fastqc.zip
+FastQC	all_sections	IMR5_1_S29_R1_001_val_1	/data/scratch/flanary/Sen_13cRA_ATAC/trimmed_qc/fastqc/IMR5_1_S29_R1_001_val_1_fastqc.zip
+FastQC	all_sections	IMR5_1_S29_R2_001_val_2	/data/scratch/flanary/Sen_13cRA_ATAC/trimmed_qc/fastqc/IMR5_1_S29_R2_001_val_2_fastqc.zip
+FastQC	all_sections	SHEP1_S31_R2_001_val_2	/data/scratch/flanary/Sen_13cRA_ATAC/trimmed_qc/fastqc/SHEP1_S31_R2_001_val_2_fastqc.zip
