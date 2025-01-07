@@ -1,0 +1,72 @@
+---
+title: "Save the Raw and Normalized Counts"
+author: "Victoria Flanary"
+date: "2025-01-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Objective
+Extract raw and fpkm-normalized counts for distal and promoter regions.
+
+# Set-up
+```{r load packages}
+library(ChrAccR)
+library(readr)
+library(styler)
+library(lintr)
+library(here)
+```
+
+```{r load dsatac object}
+dsa <- loadDsAcc(here("Sen_13cRA_ATAC", "data", "DsAtacDataset"))
+```
+
+```{r create a function to save counts from dsa objects}
+counts_from_dsa <- function(dsa, counts_suffix = "_counts.csv") {
+  tiles <- c(getRegionTypes(dsa))
+  for (i in tiles) {
+    names <- getCoord(dsa, i) # retrieve coordinate names
+    counts <- data.frame(getCounts(dsa, i)) # convert counts to a dataframe
+    fragments <- names$name
+    counts <- cbind(fragments, counts) # name rows by fragment
+    write_csv(counts,
+      paste0(
+        here("Sen_13cRA_ATAC", "data", "counts"), "/", i, counts_suffix
+      ),
+      col_names = TRUE
+    )
+  }
+}
+```
+
+```{r save raw counts per tiling region}
+counts_from_dsa(dsa, counts_suffix = "_raw_counts.csv")
+```
+
+```{r fpkm normalization}
+fpkm <- transformCounts(dsa, method = "RPKM")
+saveDsAcc(
+  fpkm,
+  here("Sen_13cRA_ATAC", "data", "DsAtacDataset_FPKM")
+)
+```
+
+```{r save fpkm normalized counts by tiling region}
+counts_from_dsa(fpkm, counts_suffix = "_fpkm_counts.csv")
+```
+
+# End of Analysis
+```{r style code}
+script <- rstudioapi::getSourceEditorContext()$path
+style_file(script)
+lint(script)
+```
+
+```{r clean environment}
+rm(list = ls())
+gc()
+```

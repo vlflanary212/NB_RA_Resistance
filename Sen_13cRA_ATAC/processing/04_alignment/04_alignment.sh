@@ -2,8 +2,8 @@
 
 ##### SLURM #####
 #SBATCH --job-name=atac_align
-#SBATCH --partition=short
-#SBATCH --time=11:59:59
+#SBATCH --partition=medium
+#SBATCH --time=49:59:59
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
@@ -25,7 +25,7 @@ echo "Processing sample: $sample"
 
 ##### VARIABLES #####
 # directories
-file_dir="/data/scratch/flanary/Sen_13cRA_ATAC/"
+file_dir="/data/scratch/flanary/Sen_13cRA_ATAC"
 fastq_dir=$file_dir/"trimmed_fastq"  #fastq storage directory
 bam_dir=$file_dir/"bam"  #bam storage directory
 
@@ -33,27 +33,27 @@ bam_dir=$file_dir/"bam"  #bam storage directory
 ref_genome="/data/project/sen-lab/genome/hg38/bwa/Homo_sapiens_assembly38.fasta"
 
 # fastq files (2/sample due to paired-end sequencing)
-fastq1="$fastq_dir/$sample"_R1_001_trimmed.fq.gz
-fastq2="$fastq_dir/$sample"_R2_001_trimmed.fq.gz
+fastq1="$fastq_dir/$sample"_R1_001_val_1.fq.gz
+fastq2="$fastq_dir/$sample"_R2_001_val_2.fq.gz
 
 ##### COMMANDS #####
 # map reads and make bam files
 bwa mem -M -t 8 $ref_genome $fastq1 $fastq2 | samtools view -S -b -h -F 4 -q 20 > $bam_dir/"$sample"_mapped.bam
 
 # sort by coordinates
-samtools sort -@ 8 -o $bam_dir/"$sample"_sort.bam $bam_dir/"$sample"_mapped.bam
+samtools sort -o $bam_dir/"$sample"_sort.bam $bam_dir/"$sample"_mapped.bam
 
 # remove duplicates
-samtools rmdup -@ 8 -S $bam_dir/"$sample"_sort.bam $bam_dir/"$sample"_rmdup.bam
+samtools rmdup -S $bam_dir/"$sample"_sort.bam $bam_dir/"$sample"_rmdup.bam
 
 # index 
-samtools index -@ 8 $bam_dir/"$sample"_rmdup.bam
+samtools index $bam_dir/"$sample"_rmdup.bam
 
 # remove mitochondrial reads
-samtools idxstats -@ 8 $bam_dir/"$sample"_rmdup.bam | cut -f 1 | grep -v chrM | xargs samtools view -b $bam_dir/"$sample"_rmdup.bam > $bam_dir/"$sample"_final.bam
+samtools idxstats $bam_dir/"$sample"_rmdup.bam | cut -f 1 | grep -v chrM | xargs samtools view -b $bam_dir/"$sample"_rmdup.bam > $bam_dir/"$sample"_final.bam
 
 # index again
-samtools index -@ 8 $bam_dir/"$sample"_final.bam
+samtools index $bam_dir/"$sample"_final.bam
 
 ##### END #####
 echo "Alignment and post-alignment processing complete for $sample"

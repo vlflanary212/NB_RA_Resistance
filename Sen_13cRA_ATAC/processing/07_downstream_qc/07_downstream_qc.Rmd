@@ -1,0 +1,156 @@
+---
+title: "Downstream ATAC-seq QC"
+author: "Victoria Flanary"
+date: "2025-01-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Objective
+Run ATAC-seq QC metrics (e.g. TSS enrichment score and fragment size distribution)
+using ChrAccR.
+
+# Set-up
+```{r load packages}
+library(ChrAccR)
+library(tidyverse)
+library(ggpubr)
+library(rstudioapi)
+library(here)
+library(styler)
+library(lintr)
+```
+
+```{r config settings}
+theme_set(muRtools::theme_nogrid())
+```
+
+```{r load data}
+dsa <- loadDsAcc(
+  here("Sen_13cRA_ATAC", "data", "DsAtacDataset")
+)
+```
+
+# Sample Annotation Table
+```{r}
+str(getSampleAnnot(dsa))
+```
+
+# Number of Each Region Type
+```{r}
+region_table <- data.frame(
+  region = getRegionTypes(dsa),
+  num_region = c(
+    getNRegions(dsa, "promoters"),
+    getNRegions(dsa, "distal_regions")
+  )
+)
+
+write_csv(
+  region_table,
+  here("Sen_13cRA_ATAC", "processing", "07_downstream_qc",
+       "num_region_table.csv")
+)
+```
+
+# Number of Fragments per Sample
+```{r}
+num_fragments <- getFragmentNum(dsa, getSamples(dsa))
+
+write_csv(
+  num_fragments,
+  here("Sen_13cRA_ATAC", "processing", "07_downstream_qc",
+       "num_fragments_per_sample.csv")
+)
+```
+
+# Fragment Size Distribution
+```{r}
+sample_list <- getSamples(dsa)
+
+plot_list <- list()
+for(i in seq_along(sample_list)) {
+  
+  p <- plotInsertSizeDistribution(
+    dsa, sample_list[i]
+  ) + ggtitle(sample_list[i])
+  
+  plot_list[[sample_list[i]]] <- p
+  
+  print(paste0("Fragment distribution plot for ", sample_list[i], " done"))
+}
+
+pdf(
+  here("Sen_13cRA_ATAC", "processing", "07_downstream_qc", 
+       "fragment_size_distribution_plots.pdf")
+)
+
+ggarrange(plotlist = plot_list, ncol = 4, nrow = 4)
+
+dev.off()
+```
+
+# TSS Enrichment
+```{r prepare granges object with tss coordinates}
+tss_gr <- muRtools::getAnnotGrl.gencode("gencode.v22")[["gene"]]
+tss_gr <- tss_gr[elementMetadata(tss_gr)[, "gene_type"] == "protein_coding"]
+tss_gr <- promoters(tss_gr, upstream = 0, downstream = 1)
+```
+
+```{r compute and plot tss enrichment scores}
+plot_list <- list()
+
+for (i in seq_along(sample_list)) {
+  tsse <- getTssEnrichment(dsa, sample_list[i], tss_gr)
+  tsse$tssEnrichment
+  plot_list[[sample_list[i]]] <- tsse$plot + ggtitle(sample_list[i])
+  print(paste0("TSSE Plot for ", sample_list[i], " done"))
+}
+
+pdf(
+  here("Sen_13cRA_ATAC", "processing", "07_downstream_qc", 
+       "tss_enrichment_plots.pdf")
+)
+
+ggarrange(plotlist = plot_list, ncol = 4, nrow = 4)
+
+dev.off()
+```
+
+# Tn5 Insertion Sites
+```{r region-by-sample matrix with Tn5 insertion counts}
+# promoters
+tn5_inserts_promoters <- getCounts(dsa, "promoters")
+
+# distal_regions
+tn5_inserts_distal <- getCounts(dsa, "distal_regions")
+
+# distribution of tn5_insertion counts by region
+pdf(
+  here("Sen_13cRA_ATAC", "processing", "07_downstream_qc",
+       "tn5_insertion_counts_by_region.pdf")
+)
+
+par(mfrow = c(2, 2))
+hist(tn5_inserts_promoters, main = "Tn5 Inserts in Promoter Regions")
+hist(log10(tn5_inserts_promoters), main = "Tn5 Inserts in Promoter Regions")
+hist(tn5_inserts_distal, main = "Tn5 Inserts in Distal Regions")
+hist(log10(tn5_inserts_distal), main = "Tn5 Inserts in Distal Regions")
+
+dev.off()
+```
+
+# End of script
+```{r style code}
+script <- rstudioapi::getSourceEditorContext()$path
+style_file(script)
+lint(script)
+```
+
+```{r clean environment}
+rm(list = ls())
+gc()
+```

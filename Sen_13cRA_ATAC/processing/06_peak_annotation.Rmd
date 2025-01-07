@@ -1,0 +1,199 @@
+---
+title: "Annotate Peaks"
+author: "Victoria Flanary"
+date: "2025-01-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Objective
+Annotate peaks for ATAC-seq data of neuroblastoma lines treated with 13cRA.
+
+# Set-up
+```{r load packages}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(biovizBase))
+suppressPackageStartupMessages(library(GenomicFeatures))
+suppressWarnings(library(genomation))
+suppressPackageStartupMessages(library(ChIPseeker))
+library(rtracklayer)
+library(AnnotationDbi)
+library(org.Hs.eg.db)
+library(ChrAccR)
+library(rstudioapi)
+library(here)
+library(styler)
+library(lintr)
+```
+
+# GRanges object of ATAC-seq peaks
+```{r function that converts narrow peaks to granges}
+NarrowPeaksToGRanges <- function(peak_dir, sample_id) {
+  peak_file <- file.path(
+    peak_dir, sample_id, paste0(sample_id, "_peaks.narrowPeak")
+  )
+  narrow_granges <- readNarrowPeak(peak_file)
+  mcols(narrow_granges) <- cbind(
+    mcols(narrow_granges), 
+    DataFrame(sample = sample_id)
+  )
+  return(narrow_granges)
+}
+```
+
+```{r define variables}
+sample_list <- read.table(
+  here("Sen_13cRA_RNA", "processing", "samples.txt"),
+  col.names = "sample"
+)
+
+peak_dir <- "/data/scratch/flanary/Sen_13cRA_ATAC/peaks"
+```
+
+```{r generate list of granges objects}
+peak_list <- lapply(
+  sample_list$sample, NarrowPeaksToGRanges,
+  peak_dir = peak_dir
+)
+
+names(peak_list) <- sample_list$sample
+```
+
+```{r merge into a single granges object}
+peaks <- peak_list |>
+  GRangesList() |>
+  flatGrl()
+```
+
+```{r format peak names to chr_start_end}
+peaks <- paste0(seqnames(peaks), "_", start(peaks), "_", end(peaks))
+```
+
+```{r save peaks}
+saveRDS(
+  peak_list,
+  here("Sen_13cRA_ATAC", "data", "peak_list.rds")
+)
+
+saveRDS(
+  peaks,
+  here("Sen_13cRA_ATAC", "data", "peak_granges.rds")
+)
+```
+
+# Peak Annotation
+```{r load annotations}
+txdb <- loadDb("/data/project/sen-lab/genome/hg38/gencode.v22.annotation.txdb")
+```
+
+```{r get genomic tiling}
+# sort peaks
+sorted_peaks <- sort(peaks)
+
+# get list of 1kb non-overlapping genomic tiles
+tiling <- muRtools::getTilingRegions("hg38", width = 1000L, onlyMainChrs = TRUE)
+
+# filter tiles for those that overlap the atac-seq peaks
+tiling <- subsetByOverlaps(tiling, peaks)
+
+# add fragment names to tiling
+tiling$name <- paste0(seqnames(tiling), "_", start(tiling), "_", end(tiling))
+```
+
+```{r annotate peaks}
+peak_anno <- annotatePeak(
+  tiling,
+  tssRegion = c(-1000, 500),
+  TxDb = txdb, annoDb = "org.Hs.eg.db"
+) |>
+  as.data.frame()
+```
+
+```{r check all regions}
+unique(peak_anno$annotation)
+```
+
+```{r subset promoters}
+promoters <- peak_anno[grep("Promoter", peak_anno$annotation), ] |>
+  makeGRangesFromDataFrame(keep.extra.columns = TRUE)
+```
+
+```{r subset non-coding regions}
+distal <- peak_anno[grep("Distal Intergenic", peak_anno$annotation), ]
+introns <- peak_anno[grep("Intron", peak_anno$annotation), ]
+
+noncoding <- rbind(distal, introns) |>
+  makeGRangesFromDataFrame(keep.extra.columns = TRUE)
+```
+
+```{r save annotated peaks}
+saveRDS(
+  peak_anno,
+  here("Sen_13cRA_ATAC", "data", "annotated_peaks.rds")
+)
+
+saveRDS(
+  promoters,
+  here("Sen_13cRA_ATAC", "data", "annotated_promoter_peaks.rds")
+)
+
+saveRDS(
+  noncoding,
+  here("Sen_13cRA_ATAC", "data", "annotated_distal_peaks.rds")
+)
+```
+
+# Create the DsATAC object
+```{r create vector of bam file paths}
+bam_dir <- "/data/scratch/flanary/Sen_13cRA_ATAC/bam"
+bam_files <- file.path(
+  bam_dir, sample_list$sample, paste0(sample_list$sample, "_final.bam")
+)
+```
+
+```{r create metadata df}
+metadata <- sample_list |>
+  separate(col = sample, sep = "_", into = c("sample", "replicate"))
+
+metadata <- data.frame(
+  metadata, 
+  phenotype = c("ADR", "ADR", "MES", "MES", "MES", "MES", "ADR", "ADR"),
+  bam_dir = bam_files)
+```
+
+```{r set flag to remove sex chromosomes}
+setConfigElement("filteringSexChroms", TRUE)
+```
+
+```{r create dsatac object}
+dsa <- DsATAC.bam(
+  sampleAnnot = metadata,
+  bamFiles = bam_files,
+  genome = "hg38",
+  regionSets = list(promoters = promoters, distal_regions = noncoding),
+  sampleIdCol = "sample",
+  diskDump = FALSE
+)
+```
+
+```{r save the dsatac object}
+saveDsAcc(
+  dsa,
+  here("Sen_13cRA_ATAC", "data", "DsAtacDataset")
+)
+```
+
+# End of script
+```{r style code}
+script <- rstudioapi::getSourceEditorContext()$path
+style_file(script)
+lint(script)
+```
+
+```{r clean environment}
+rm(list = ls())
+gc()
+```
