@@ -50,7 +50,7 @@ ra_samples <- setdiff(cell_line, c("FOXJ3_siRNA", "BE2C_neg_control"))
   
 write.table(
   ra_samples,
-  here("Sen_13cRA_RNA", "processing", "03_alignment", "samples.txt"),
+  here("Sen_13cRA_RNA", "processing", "samples.txt"),
   sep = "\t",
   row.names = FALSE,
   col.names = FALSE,

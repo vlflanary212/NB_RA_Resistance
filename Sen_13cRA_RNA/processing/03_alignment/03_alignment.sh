@@ -19,7 +19,7 @@ module load STAR/2.7.3a-GCC-6.4.0-2.28
 
 ###### ARRAY #######
 wd="/home/flanary/Projects/RA_Resistance"
-samples=$wd/"Sen_13cRA_RNA/processing/03_alignment/samples.txt"
+samples=$wd/"Sen_13cRA_RNA/processing/samples.txt"
 line1=$(sed -n "$SLURM_ARRAY_TASK_ID"p "$samples")
 echo "line1:$line1"
 
