@@ -1,0 +1,145 @@
+/cm/local/apps/slurm/var/spool/job31053498/slurm_script: line 20: /home/flanary/miniconda3/etc/profile.d/conda.sh: No such file or directory
+bamFilesList: ['/data/scratch/flanary/Sen_13cRA_ATAC/bam/SKNAS1_S33_final.bam']
+binLength: 200
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: read length
+numberOfProcessors: 1
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: False
+chrsToSkip: []
+stepSize: 200
+center_read: False
+samFlag_include: None
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: False
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 1000
+INFO  @ Tue, 07 Jan 2025 17:00:10: 
+# Command line: callpeak --treatment /data/scratch/flanary/Sen_13cRA_ATAC/bam/SKNAS1_S33_final.bam --name SKNAS1_S33 --outdir /data/scratch/flanary/Sen_13cRA_ATAC/peaks --gsize hs --nomodel --shift -75 --extsize 150 --keep-dup all --call-summits --pvalue 0.01
+# ARGUMENTS LIST:
+# name = SKNAS1_S33
+# format = AUTO
+# ChIP-seq file = ['/data/scratch/flanary/Sen_13cRA_ATAC/bam/SKNAS1_S33_final.bam']
+# control file = None
+# effective genome size = 2.70e+09
+# band width = 300
+# model fold = [5, 50]
+# pvalue cutoff = 1.00e-02
+# qvalue will not be calculated and reported as -1 in the final output.
+# The maximum gap between significant sites is assigned as the read length/tag size.
+# The minimum length of peaks is assigned as the predicted fragment length "d".
+# Larger dataset will be scaled towards smaller dataset.
+# Range for calculating regional lambda is: 10000 bps
+# Broad region calling is off
+# Paired-End mode is off
+# Searching for subpeak summits is on
+ 
+INFO  @ Tue, 07 Jan 2025 17:00:10: #1 read tag files... 
+INFO  @ Tue, 07 Jan 2025 17:00:10: #1 read treatment tags... 
+INFO  @ Tue, 07 Jan 2025 17:00:10: Detected format is: BAM 
+INFO  @ Tue, 07 Jan 2025 17:00:10: * Input file is gzipped. 
+INFO  @ Tue, 07 Jan 2025 17:00:13:  1000000 
+INFO  @ Tue, 07 Jan 2025 17:00:16:  2000000 
+INFO  @ Tue, 07 Jan 2025 17:00:19:  3000000 
+INFO  @ Tue, 07 Jan 2025 17:00:22:  4000000 
+INFO  @ Tue, 07 Jan 2025 17:00:25:  5000000 
+INFO  @ Tue, 07 Jan 2025 17:00:28:  6000000 
+INFO  @ Tue, 07 Jan 2025 17:00:30:  7000000 
+INFO  @ Tue, 07 Jan 2025 17:00:33:  8000000 
+INFO  @ Tue, 07 Jan 2025 17:00:36:  9000000 
+INFO  @ Tue, 07 Jan 2025 17:00:39:  10000000 
+INFO  @ Tue, 07 Jan 2025 17:00:42:  11000000 
+INFO  @ Tue, 07 Jan 2025 17:00:45:  12000000 
+INFO  @ Tue, 07 Jan 2025 17:00:48:  13000000 
+INFO  @ Tue, 07 Jan 2025 17:00:51:  14000000 
+INFO  @ Tue, 07 Jan 2025 17:00:54:  15000000 
+INFO  @ Tue, 07 Jan 2025 17:00:57:  16000000 
+INFO  @ Tue, 07 Jan 2025 17:01:00:  17000000 
+INFO  @ Tue, 07 Jan 2025 17:01:03:  18000000 
+INFO  @ Tue, 07 Jan 2025 17:01:06:  19000000 
+INFO  @ Tue, 07 Jan 2025 17:01:09:  20000000 
+INFO  @ Tue, 07 Jan 2025 17:01:12:  21000000 
+INFO  @ Tue, 07 Jan 2025 17:01:15:  22000000 
+INFO  @ Tue, 07 Jan 2025 17:01:18:  23000000 
+INFO  @ Tue, 07 Jan 2025 17:01:21:  24000000 
+INFO  @ Tue, 07 Jan 2025 17:01:24:  25000000 
+INFO  @ Tue, 07 Jan 2025 17:01:27:  26000000 
+INFO  @ Tue, 07 Jan 2025 17:01:30:  27000000 
+INFO  @ Tue, 07 Jan 2025 17:01:33:  28000000 
+INFO  @ Tue, 07 Jan 2025 17:01:36:  29000000 
+INFO  @ Tue, 07 Jan 2025 17:01:39:  30000000 
+INFO  @ Tue, 07 Jan 2025 17:01:42:  31000000 
+INFO  @ Tue, 07 Jan 2025 17:01:45:  32000000 
+INFO  @ Tue, 07 Jan 2025 17:01:48:  33000000 
+INFO  @ Tue, 07 Jan 2025 17:01:51:  34000000 
+INFO  @ Tue, 07 Jan 2025 17:01:54:  35000000 
+INFO  @ Tue, 07 Jan 2025 17:01:57:  36000000 
+INFO  @ Tue, 07 Jan 2025 17:02:00:  37000000 
+INFO  @ Tue, 07 Jan 2025 17:02:03:  38000000 
+INFO  @ Tue, 07 Jan 2025 17:02:06:  39000000 
+INFO  @ Tue, 07 Jan 2025 17:02:09:  40000000 
+INFO  @ Tue, 07 Jan 2025 17:02:12:  41000000 
+INFO  @ Tue, 07 Jan 2025 17:02:14:  42000000 
+INFO  @ Tue, 07 Jan 2025 17:02:17:  43000000 
+INFO  @ Tue, 07 Jan 2025 17:02:20:  44000000 
+INFO  @ Tue, 07 Jan 2025 17:02:23:  45000000 
+INFO  @ Tue, 07 Jan 2025 17:02:26:  46000000 
+INFO  @ Tue, 07 Jan 2025 17:02:29:  47000000 
+INFO  @ Tue, 07 Jan 2025 17:02:32:  48000000 
+INFO  @ Tue, 07 Jan 2025 17:02:35:  49000000 
+INFO  @ Tue, 07 Jan 2025 17:02:38:  50000000 
+INFO  @ Tue, 07 Jan 2025 17:02:41:  51000000 
+INFO  @ Tue, 07 Jan 2025 17:02:44:  52000000 
+INFO  @ Tue, 07 Jan 2025 17:02:47:  53000000 
+INFO  @ Tue, 07 Jan 2025 17:02:50:  54000000 
+INFO  @ Tue, 07 Jan 2025 17:02:53:  55000000 
+INFO  @ Tue, 07 Jan 2025 17:02:56:  56000000 
+INFO  @ Tue, 07 Jan 2025 17:02:59:  57000000 
+INFO  @ Tue, 07 Jan 2025 17:03:02:  58000000 
+INFO  @ Tue, 07 Jan 2025 17:03:05:  59000000 
+INFO  @ Tue, 07 Jan 2025 17:03:08:  60000000 
+INFO  @ Tue, 07 Jan 2025 17:03:10:  61000000 
+INFO  @ Tue, 07 Jan 2025 17:03:13:  62000000 
+INFO  @ Tue, 07 Jan 2025 17:03:16:  63000000 
+INFO  @ Tue, 07 Jan 2025 17:03:19:  64000000 
+INFO  @ Tue, 07 Jan 2025 17:03:22:  65000000 
+INFO  @ Tue, 07 Jan 2025 17:03:25:  66000000 
+INFO  @ Tue, 07 Jan 2025 17:03:28:  67000000 
+INFO  @ Tue, 07 Jan 2025 17:03:31:  68000000 
+INFO  @ Tue, 07 Jan 2025 17:03:34:  69000000 
+INFO  @ Tue, 07 Jan 2025 17:03:37:  70000000 
+INFO  @ Tue, 07 Jan 2025 17:03:40:  71000000 
+INFO  @ Tue, 07 Jan 2025 17:03:43:  72000000 
+INFO  @ Tue, 07 Jan 2025 17:03:46:  73000000 
+INFO  @ Tue, 07 Jan 2025 17:03:49:  74000000 
+INFO  @ Tue, 07 Jan 2025 17:03:52:  75000000 
+INFO  @ Tue, 07 Jan 2025 17:03:56:  76000000 
+INFO  @ Tue, 07 Jan 2025 17:03:56: 76075933 reads have been read. 
+INFO  @ Tue, 07 Jan 2025 17:03:57: #1 tag size is determined as 100 bps 
+INFO  @ Tue, 07 Jan 2025 17:03:57: #1 tag size = 100.0 
+INFO  @ Tue, 07 Jan 2025 17:03:57: #1  total tags in treatment: 76075933 
+INFO  @ Tue, 07 Jan 2025 17:03:57: #1 finished! 
+INFO  @ Tue, 07 Jan 2025 17:03:57: #2 Build Peak Model... 
+INFO  @ Tue, 07 Jan 2025 17:03:57: #2 Skipped... 
+INFO  @ Tue, 07 Jan 2025 17:03:57: #2 Use 150 as fragment length 
+INFO  @ Tue, 07 Jan 2025 17:03:57: #2 Sequencing ends will be shifted towards 5' by 75 bp(s) 
+INFO  @ Tue, 07 Jan 2025 17:03:57: #3 Call peaks... 
+INFO  @ Tue, 07 Jan 2025 17:03:57: #3 Going to call summits inside each peak ... 
+INFO  @ Tue, 07 Jan 2025 17:03:57: #3 Call peaks with given -log10pvalue cutoff: 2.00000 ... 
+INFO  @ Tue, 07 Jan 2025 17:03:57: #3 Pre-compute pvalue-qvalue table... 
+INFO  @ Tue, 07 Jan 2025 17:06:39: #3 Call peaks for each chromosome... 
+INFO  @ Tue, 07 Jan 2025 17:09:20: #4 Write output xls file... /data/scratch/flanary/Sen_13cRA_ATAC/peaks/SKNAS1_S33_peaks.xls 
+INFO  @ Tue, 07 Jan 2025 17:09:21: #4 Write peak in narrowPeak format file... /data/scratch/flanary/Sen_13cRA_ATAC/peaks/SKNAS1_S33_peaks.narrowPeak 
+INFO  @ Tue, 07 Jan 2025 17:09:22: #4 Write summits bed file... /data/scratch/flanary/Sen_13cRA_ATAC/peaks/SKNAS1_S33_summits.bed 
+INFO  @ Tue, 07 Jan 2025 17:09:22: Done! 

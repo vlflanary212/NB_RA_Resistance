@@ -22,6 +22,7 @@ suppressPackageStartupMessages(library(ChIPseeker))
 library(rtracklayer)
 library(AnnotationDbi)
 library(org.Hs.eg.db)
+library(BSgenome.Hsapiens.UCSC.hg38)
 library(ChrAccR)
 library(rstudioapi)
 library(here)
@@ -33,7 +34,7 @@ library(lintr)
 ```{r function that converts narrow peaks to granges}
 NarrowPeaksToGRanges <- function(peak_dir, sample_id) {
   peak_file <- file.path(
-    peak_dir, sample_id, paste0(sample_id, "_peaks.narrowPeak")
+    peak_dir, paste0(sample_id, "_peaks.narrowPeak")
   )
   narrow_granges <- readNarrowPeak(peak_file)
   mcols(narrow_granges) <- cbind(
@@ -46,7 +47,7 @@ NarrowPeaksToGRanges <- function(peak_dir, sample_id) {
 
 ```{r define variables}
 sample_list <- read.table(
-  here("Sen_13cRA_RNA", "processing", "samples.txt"),
+  here("Sen_13cRA_ATAC", "processing", "samples.txt"),
   col.names = "sample"
 )
 
@@ -69,7 +70,7 @@ peaks <- peak_list |>
 ```
 
 ```{r format peak names to chr_start_end}
-peaks <- paste0(seqnames(peaks), "_", start(peaks), "_", end(peaks))
+peaks$name <- paste0(seqnames(peaks), "_", start(peaks), "_", end(peaks))
 ```
 
 ```{r save peaks}
@@ -97,7 +98,7 @@ sorted_peaks <- sort(peaks)
 tiling <- muRtools::getTilingRegions("hg38", width = 1000L, onlyMainChrs = TRUE)
 
 # filter tiles for those that overlap the atac-seq peaks
-tiling <- subsetByOverlaps(tiling, peaks)
+tiling <- subsetByOverlaps(tiling, sorted_peaks)
 
 # add fragment names to tiling
 tiling$name <- paste0(seqnames(tiling), "_", start(tiling), "_", end(tiling))
@@ -154,10 +155,7 @@ bam_files <- file.path(
 )
 ```
 
-```{r create metadata df}
-metadata <- sample_list |>
-  separate(col = sample, sep = "_", into = c("sample", "replicate"))
-
+```{r edit metadata df}
 metadata <- data.frame(
   metadata, 
   phenotype = c("ADR", "ADR", "MES", "MES", "MES", "MES", "ADR", "ADR"),

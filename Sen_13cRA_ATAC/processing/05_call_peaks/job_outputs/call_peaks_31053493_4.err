@@ -1,0 +1,131 @@
+/cm/local/apps/slurm/var/spool/job31053497/slurm_script: line 20: /home/flanary/miniconda3/etc/profile.d/conda.sh: No such file or directory
+bamFilesList: ['/data/scratch/flanary/Sen_13cRA_ATAC/bam/SHEP2_S32_final.bam']
+binLength: 200
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: read length
+numberOfProcessors: 1
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: False
+chrsToSkip: []
+stepSize: 200
+center_read: False
+samFlag_include: None
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: False
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 1000
+INFO  @ Tue, 07 Jan 2025 16:56:46: 
+# Command line: callpeak --treatment /data/scratch/flanary/Sen_13cRA_ATAC/bam/SHEP2_S32_final.bam --name SHEP2_S32 --outdir /data/scratch/flanary/Sen_13cRA_ATAC/peaks --gsize hs --nomodel --shift -75 --extsize 150 --keep-dup all --call-summits --pvalue 0.01
+# ARGUMENTS LIST:
+# name = SHEP2_S32
+# format = AUTO
+# ChIP-seq file = ['/data/scratch/flanary/Sen_13cRA_ATAC/bam/SHEP2_S32_final.bam']
+# control file = None
+# effective genome size = 2.70e+09
+# band width = 300
+# model fold = [5, 50]
+# pvalue cutoff = 1.00e-02
+# qvalue will not be calculated and reported as -1 in the final output.
+# The maximum gap between significant sites is assigned as the read length/tag size.
+# The minimum length of peaks is assigned as the predicted fragment length "d".
+# Larger dataset will be scaled towards smaller dataset.
+# Range for calculating regional lambda is: 10000 bps
+# Broad region calling is off
+# Paired-End mode is off
+# Searching for subpeak summits is on
+ 
+INFO  @ Tue, 07 Jan 2025 16:56:46: #1 read tag files... 
+INFO  @ Tue, 07 Jan 2025 16:56:46: #1 read treatment tags... 
+INFO  @ Tue, 07 Jan 2025 16:56:46: Detected format is: BAM 
+INFO  @ Tue, 07 Jan 2025 16:56:46: * Input file is gzipped. 
+INFO  @ Tue, 07 Jan 2025 16:56:49:  1000000 
+INFO  @ Tue, 07 Jan 2025 16:56:52:  2000000 
+INFO  @ Tue, 07 Jan 2025 16:56:55:  3000000 
+INFO  @ Tue, 07 Jan 2025 16:56:58:  4000000 
+INFO  @ Tue, 07 Jan 2025 16:57:01:  5000000 
+INFO  @ Tue, 07 Jan 2025 16:57:04:  6000000 
+INFO  @ Tue, 07 Jan 2025 16:57:07:  7000000 
+INFO  @ Tue, 07 Jan 2025 16:57:10:  8000000 
+INFO  @ Tue, 07 Jan 2025 16:57:13:  9000000 
+INFO  @ Tue, 07 Jan 2025 16:57:16:  10000000 
+INFO  @ Tue, 07 Jan 2025 16:57:19:  11000000 
+INFO  @ Tue, 07 Jan 2025 16:57:22:  12000000 
+INFO  @ Tue, 07 Jan 2025 16:57:25:  13000000 
+INFO  @ Tue, 07 Jan 2025 16:57:28:  14000000 
+INFO  @ Tue, 07 Jan 2025 16:57:31:  15000000 
+INFO  @ Tue, 07 Jan 2025 16:57:34:  16000000 
+INFO  @ Tue, 07 Jan 2025 16:57:37:  17000000 
+INFO  @ Tue, 07 Jan 2025 16:57:40:  18000000 
+INFO  @ Tue, 07 Jan 2025 16:57:43:  19000000 
+INFO  @ Tue, 07 Jan 2025 16:57:46:  20000000 
+INFO  @ Tue, 07 Jan 2025 16:57:49:  21000000 
+INFO  @ Tue, 07 Jan 2025 16:57:52:  22000000 
+INFO  @ Tue, 07 Jan 2025 16:57:55:  23000000 
+INFO  @ Tue, 07 Jan 2025 16:57:58:  24000000 
+INFO  @ Tue, 07 Jan 2025 16:58:01:  25000000 
+INFO  @ Tue, 07 Jan 2025 16:58:04:  26000000 
+INFO  @ Tue, 07 Jan 2025 16:58:07:  27000000 
+INFO  @ Tue, 07 Jan 2025 16:58:10:  28000000 
+INFO  @ Tue, 07 Jan 2025 16:58:12:  29000000 
+INFO  @ Tue, 07 Jan 2025 16:58:15:  30000000 
+INFO  @ Tue, 07 Jan 2025 16:58:18:  31000000 
+INFO  @ Tue, 07 Jan 2025 16:58:21:  32000000 
+INFO  @ Tue, 07 Jan 2025 16:58:24:  33000000 
+INFO  @ Tue, 07 Jan 2025 16:58:28:  34000000 
+INFO  @ Tue, 07 Jan 2025 16:58:31:  35000000 
+INFO  @ Tue, 07 Jan 2025 16:58:34:  36000000 
+INFO  @ Tue, 07 Jan 2025 16:58:36:  37000000 
+INFO  @ Tue, 07 Jan 2025 16:58:39:  38000000 
+INFO  @ Tue, 07 Jan 2025 16:58:42:  39000000 
+INFO  @ Tue, 07 Jan 2025 16:58:45:  40000000 
+INFO  @ Tue, 07 Jan 2025 16:58:48:  41000000 
+INFO  @ Tue, 07 Jan 2025 16:58:51:  42000000 
+INFO  @ Tue, 07 Jan 2025 16:58:54:  43000000 
+INFO  @ Tue, 07 Jan 2025 16:58:57:  44000000 
+INFO  @ Tue, 07 Jan 2025 16:59:00:  45000000 
+INFO  @ Tue, 07 Jan 2025 16:59:03:  46000000 
+INFO  @ Tue, 07 Jan 2025 16:59:06:  47000000 
+INFO  @ Tue, 07 Jan 2025 16:59:09:  48000000 
+INFO  @ Tue, 07 Jan 2025 16:59:12:  49000000 
+INFO  @ Tue, 07 Jan 2025 16:59:15:  50000000 
+INFO  @ Tue, 07 Jan 2025 16:59:18:  51000000 
+INFO  @ Tue, 07 Jan 2025 16:59:21:  52000000 
+INFO  @ Tue, 07 Jan 2025 16:59:24:  53000000 
+INFO  @ Tue, 07 Jan 2025 16:59:27:  54000000 
+INFO  @ Tue, 07 Jan 2025 16:59:30:  55000000 
+INFO  @ Tue, 07 Jan 2025 16:59:33:  56000000 
+INFO  @ Tue, 07 Jan 2025 16:59:36:  57000000 
+INFO  @ Tue, 07 Jan 2025 16:59:39:  58000000 
+INFO  @ Tue, 07 Jan 2025 16:59:43:  59000000 
+INFO  @ Tue, 07 Jan 2025 16:59:46:  60000000 
+INFO  @ Tue, 07 Jan 2025 16:59:49:  61000000 
+INFO  @ Tue, 07 Jan 2025 16:59:52:  62000000 
+INFO  @ Tue, 07 Jan 2025 16:59:55: 62647399 reads have been read. 
+INFO  @ Tue, 07 Jan 2025 16:59:55: #1 tag size is determined as 98 bps 
+INFO  @ Tue, 07 Jan 2025 16:59:55: #1 tag size = 98.0 
+INFO  @ Tue, 07 Jan 2025 16:59:55: #1  total tags in treatment: 62647399 
+INFO  @ Tue, 07 Jan 2025 16:59:55: #1 finished! 
+INFO  @ Tue, 07 Jan 2025 16:59:55: #2 Build Peak Model... 
+INFO  @ Tue, 07 Jan 2025 16:59:55: #2 Skipped... 
+INFO  @ Tue, 07 Jan 2025 16:59:55: #2 Use 150 as fragment length 
+INFO  @ Tue, 07 Jan 2025 16:59:55: #2 Sequencing ends will be shifted towards 5' by 75 bp(s) 
+INFO  @ Tue, 07 Jan 2025 16:59:55: #3 Call peaks... 
+INFO  @ Tue, 07 Jan 2025 16:59:55: #3 Going to call summits inside each peak ... 
+INFO  @ Tue, 07 Jan 2025 16:59:55: #3 Call peaks with given -log10pvalue cutoff: 2.00000 ... 
+INFO  @ Tue, 07 Jan 2025 16:59:55: #3 Pre-compute pvalue-qvalue table... 
+INFO  @ Tue, 07 Jan 2025 17:02:13: #3 Call peaks for each chromosome... 
+INFO  @ Tue, 07 Jan 2025 17:05:06: #4 Write output xls file... /data/scratch/flanary/Sen_13cRA_ATAC/peaks/SHEP2_S32_peaks.xls 
+INFO  @ Tue, 07 Jan 2025 17:05:07: #4 Write peak in narrowPeak format file... /data/scratch/flanary/Sen_13cRA_ATAC/peaks/SHEP2_S32_peaks.narrowPeak 
+INFO  @ Tue, 07 Jan 2025 17:05:08: #4 Write summits bed file... /data/scratch/flanary/Sen_13cRA_ATAC/peaks/SHEP2_S32_summits.bed 
+INFO  @ Tue, 07 Jan 2025 17:05:09: Done! 
