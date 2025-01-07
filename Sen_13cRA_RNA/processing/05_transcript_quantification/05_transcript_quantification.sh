@@ -2,8 +2,8 @@
 
 ##### SLURM #####
 #SBATCH --job-name=tx_quant
-#SBATCH --partition=short
-#SBATCH --time=11:59:59
+#SBATCH --partition=express
+#SBATCH --time=01:59:59
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
@@ -18,26 +18,30 @@
 module load Anaconda3
 
 source ~/miniconda3/etc/profile.d/conda.sh
-conda activate trim_galore_env || { echo "Failed to activate Conda environment"; exit 1; }
+conda activate featurecounts || { echo "Failed to activate Conda environment"; exit 1; }
 
 ##### VARIABLES #####
 bam_dir="/data/scratch/flanary/Sen_13cRA_RNA/bam"
-output_dir="/data/scratch/flanary/Sen_13cRA_RNA/"
+output_dir="/data/scratch/flanary/Sen_13cRA_RNA/counts"
 
 ###### ARRAY #######
-samples="/home/flanary/Projects/RA_Resistance/Sen_13cRA_RNA/processing/03_alignment/samples.txt"
+samples="/home/flanary/Projects/RA_Resistance/Sen_13cRA_RNA/processing/samples.txt"
 line1=$(sed -n "$SLURM_ARRAY_TASK_ID"p "$samples")
 echo "line1:$line1"
 
 ##### COMMANDS #####
+# make output directory
+sample_output=$output_dir/$line1
+mkdir -p $sample_output
+
 # gtf file
 gtf="/data/project/sen-lab/genome/hg38/gencode.v22.annotation.gtf"
 
 # get counts
-featureCounts -p -T 8 -t exon -g gene_id -a $gtf -o $output_dir/raw_counts.txt $bam_dir/$line1.rmdup.bam
+featureCounts -p -T 8 -t exon -g gene_id -a $gtf -o $sample_output/raw_counts.txt $bam_dir/$line1/$line1.rmdup.bam
 
 # edit counts
-cat $output_dir/raw_counts.txt| cut -f1,7- | sed 1d > $output_dir/counts.txt
+cat $sample_output/raw_counts.txt| cut -f1,7- | sed 1d > $sample_output/counts.txt
 
 ##### END #####
 echo "Transcript quantification complete for $line1"
