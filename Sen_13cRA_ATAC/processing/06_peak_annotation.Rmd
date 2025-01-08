@@ -108,7 +108,8 @@ tiling$name <- paste0(seqnames(tiling), "_", start(tiling), "_", end(tiling))
 peak_anno <- annotatePeak(
   tiling,
   tssRegion = c(-1000, 500),
-  TxDb = txdb, annoDb = "org.Hs.eg.db"
+  TxDb = txdb, 
+  annoDb = "org.Hs.eg.db"
 ) |>
   as.data.frame()
 ```

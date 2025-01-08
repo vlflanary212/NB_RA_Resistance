@@ -102,7 +102,7 @@ dev.off()
 
 # TSS Enrichment
 ```{r prepare granges object with tss coordinates}
-tss_gr <- muRtools::getAnnotGrl.gencode("gencode.v21")[["gene"]]
+tss_gr <- muRtools::getAnnotGrl.gencode("gencode.v27")[["gene"]]
 # gencode.v22 not supported
 tss_gr <- tss_gr[elementMetadata(tss_gr)[, "gene_type"] == "protein_coding"]
 tss_gr <- promoters(tss_gr, upstream = 0, downstream = 1)
@@ -118,7 +118,8 @@ seqlevels(tss_gr_filt) <- intersect(seqlevels(tss_gr), chromosomes)
 # Initialize list for plots and data frame for TSS enrichment scores
 plot_list <- list()
 tsse_scores <- data.frame(
-  sample = character(), tss_enrichment = numeric(), stringsAsFactors = FALSE
+  sample = character(), tsse_score = numeric(), 
+  tsse_score_smoothed = numeric(), stringsAsFactors = FALSE
 )
 
 # Loop through sample list
@@ -128,6 +129,7 @@ for (i in seq_along(sample_list)) {
   
   # Extract TSS enrichment value
   enrichment_score <- tsse$tssEnrichment
+  smoothed_score <-tsse$tssEnrichment.smoothed
   
   # Add to the plot list
   plot_list[[sample_list[i]]] <- tsse$plot + ggtitle(sample_list[i])
@@ -135,7 +137,11 @@ for (i in seq_along(sample_list)) {
   # Add score to the data frame
   tsse_scores <- rbind(
     tsse_scores, 
-    data.frame(sample = sample_list[i], tss_enrichment = enrichment_score)
+    data.frame(
+      sample = sample_list[i], 
+      tsse_score = enrichment_score,
+      tsse_score_smoothed = smoothed_score
+      )
     )
   
   # Print progress
@@ -152,6 +158,41 @@ ggarrange(plotlist = plot_list, ncol = 4, nrow = 2)
 dev.off()
 
 # Save TSS enrichment scores to a CSV file
+write.csv(
+  tsse_scores, 
+  file = here("Sen_13cRA_ATAC", "processing", "07_downstream_qc", "tss_enrichment_scores.csv"), 
+  row.names = FALSE
+)
+
+print("TSS enrichment scores saved.")
+```
+
+```{r}
+tsse_scores <- data.frame(
+  sample = character(), tsse_score = numeric(), 
+  tsse_score_smoothed = numeric(), stringsAsFactors = FALSE
+)
+
+# Loop through sample list
+for (i in seq_along(sample_list)) {
+  # Compute TSS enrichment
+  tsse <- getTssEnrichment(dsa, sample_list[i], tss_gr_filt)
+  
+  # Extract TSS enrichment value
+  enrichment_score <- tsse$tssEnrichment
+  smoothed_score <-tsse$tssEnrichment.smoothed
+  
+  # Add score to the data frame
+  tsse_scores <- rbind(
+    tsse_scores, 
+    data.frame(
+      sample = sample_list[i], 
+      tsse_score = enrichment_score,
+      tsse_score_smoothed = smoothed_score
+      )
+    )
+}
+
 write.csv(
   tsse_scores, 
   file = here("Sen_13cRA_ATAC", "processing", "07_downstream_qc", "tss_enrichment_scores.csv"), 
