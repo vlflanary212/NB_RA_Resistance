@@ -60,8 +60,14 @@ write_csv(
 ```{r}
 num_fragments <- getFragmentNum(dsa, getSamples(dsa))
 
+num_fragments_df <- data.frame(
+  sample = dsa@sampleAnnot[["sample"]],
+  num_fragments = num_fragments,
+  row.names = NULL
+)
+
 write_csv(
-  num_fragments,
+  num_fragments_df,
   here("Sen_13cRA_ATAC", "processing", "07_downstream_qc",
        "num_fragments_per_sample.csv")
 )
@@ -85,42 +91,79 @@ for(i in seq_along(sample_list)) {
 
 pdf(
   here("Sen_13cRA_ATAC", "processing", "07_downstream_qc", 
-       "fragment_size_distribution_plots.pdf")
+       "fragment_size_distribution_plots.pdf"),
+  height = 6, width = 9
 )
 
-ggarrange(plotlist = plot_list, ncol = 4, nrow = 4)
+ggarrange(plotlist = plot_list, ncol = 4, nrow = 2)
 
 dev.off()
 ```
 
 # TSS Enrichment
 ```{r prepare granges object with tss coordinates}
-tss_gr <- muRtools::getAnnotGrl.gencode("gencode.v22")[["gene"]]
+tss_gr <- muRtools::getAnnotGrl.gencode("gencode.v21")[["gene"]]
+# gencode.v22 not supported
 tss_gr <- tss_gr[elementMetadata(tss_gr)[, "gene_type"] == "protein_coding"]
 tss_gr <- promoters(tss_gr, upstream = 0, downstream = 1)
 ```
 
-```{r compute and plot tss enrichment scores}
-plot_list <- list()
+```{r filter non-canonical chromosomes}
+chromosomes <- paste0("chr", c(1:22, "X", "Y"))
+tss_gr_filt <- tss_gr[seqnames(tss_gr) %in% chromosomes]
+seqlevels(tss_gr_filt) <- intersect(seqlevels(tss_gr), chromosomes)
+```
 
+```{r}
+# Initialize list for plots and data frame for TSS enrichment scores
+plot_list <- list()
+tsse_scores <- data.frame(
+  sample = character(), tss_enrichment = numeric(), stringsAsFactors = FALSE
+)
+
+# Loop through sample list
 for (i in seq_along(sample_list)) {
-  tsse <- getTssEnrichment(dsa, sample_list[i], tss_gr)
-  tsse$tssEnrichment
+  # Compute TSS enrichment
+  tsse <- getTssEnrichment(dsa, sample_list[i], tss_gr_filt)
+  
+  # Extract TSS enrichment value
+  enrichment_score <- tsse$tssEnrichment
+  
+  # Add to the plot list
   plot_list[[sample_list[i]]] <- tsse$plot + ggtitle(sample_list[i])
+  
+  # Add score to the data frame
+  tsse_scores <- rbind(
+    tsse_scores, 
+    data.frame(sample = sample_list[i], tss_enrichment = enrichment_score)
+    )
+  
+  # Print progress
   print(paste0("TSSE Plot for ", sample_list[i], " done"))
 }
 
+# Save plots to a PDF
 pdf(
   here("Sen_13cRA_ATAC", "processing", "07_downstream_qc", 
-       "tss_enrichment_plots.pdf")
+       "tss_enrichment_plots.pdf"),
+  height = 6, width = 9
+)
+ggarrange(plotlist = plot_list, ncol = 4, nrow = 2)
+dev.off()
+
+# Save TSS enrichment scores to a CSV file
+write.csv(
+  tsse_scores, 
+  file = here("Sen_13cRA_ATAC", "processing", "07_downstream_qc", "tss_enrichment_scores.csv"), 
+  row.names = FALSE
 )
 
-ggarrange(plotlist = plot_list, ncol = 4, nrow = 4)
-
-dev.off()
+print("TSS enrichment scores saved.")
 ```
 
-# Tn5 Insertion Sites
+# Fraction of Reads in Peaks
+
+# Genome-Wide Tn5 Insertion Counts
 ```{r region-by-sample matrix with Tn5 insertion counts}
 # promoters
 tn5_inserts_promoters <- getCounts(dsa, "promoters")

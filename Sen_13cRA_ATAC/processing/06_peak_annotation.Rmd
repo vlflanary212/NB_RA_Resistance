@@ -17,17 +17,16 @@ Annotate peaks for ATAC-seq data of neuroblastoma lines treated with 13cRA.
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(biovizBase))
 suppressPackageStartupMessages(library(GenomicFeatures))
-suppressWarnings(library(genomation))
 suppressPackageStartupMessages(library(ChIPseeker))
+suppressWarnings(library(genomation))
 library(rtracklayer)
 library(AnnotationDbi)
 library(org.Hs.eg.db)
-library(BSgenome.Hsapiens.UCSC.hg38)
-library(ChrAccR)
 library(rstudioapi)
 library(here)
 library(styler)
 library(lintr)
+library(ChrAccR)
 ```
 
 # GRanges object of ATAC-seq peaks
@@ -73,12 +72,13 @@ peaks <- peak_list |>
 peaks$name <- paste0(seqnames(peaks), "_", start(peaks), "_", end(peaks))
 ```
 
-```{r save peaks}
-saveRDS(
-  peak_list,
-  here("Sen_13cRA_ATAC", "data", "peak_list.rds")
-)
+```{r filter to only include canon chromosomes}
+chromosomes <- paste0("chr", c(1:22, "X", "Y"))
+peaks_filt <- peaks[seqnames(peaks) %in% chromosomes]
+seqlevels(peaks_filt) <- intersect(seqlevels(peaks), chromosomes)
+```
 
+```{r save peaks}
 saveRDS(
   peaks,
   here("Sen_13cRA_ATAC", "data", "peak_granges.rds")
@@ -92,7 +92,7 @@ txdb <- loadDb("/data/project/sen-lab/genome/hg38/gencode.v22.annotation.txdb")
 
 ```{r get genomic tiling}
 # sort peaks
-sorted_peaks <- sort(peaks)
+sorted_peaks <- sort(peaks_filt)
 
 # get list of 1kb non-overlapping genomic tiles
 tiling <- muRtools::getTilingRegions("hg38", width = 1000L, onlyMainChrs = TRUE)
@@ -151,11 +151,15 @@ saveRDS(
 ```{r create vector of bam file paths}
 bam_dir <- "/data/scratch/flanary/Sen_13cRA_ATAC/bam"
 bam_files <- file.path(
-  bam_dir, sample_list$sample, paste0(sample_list$sample, "_final.bam")
+  bam_dir, paste0(sample_list$sample, "_final.bam")
 )
 ```
 
 ```{r edit metadata df}
+metadata <- sample_list |>
+  separate(col = sample, into = c("sample", "suffix"), sep = "_S") |>
+  dplyr::select(sample)
+
 metadata <- data.frame(
   metadata, 
   phenotype = c("ADR", "ADR", "MES", "MES", "MES", "MES", "ADR", "ADR"),
