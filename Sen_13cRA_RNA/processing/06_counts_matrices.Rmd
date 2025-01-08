@@ -1,0 +1,198 @@
+---
+title: "Retrieve Raw and Normalized Counts"
+author: "Victoria Flanary"
+date: "2025-01-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Objective
+Merge and normalize RNA-seq counts matrices for all 13cRA-treated cell lines.
+
+# Set-up
+```{r load packages}
+library(data.table)
+library(edgeR)
+library(tidyverse)
+library(rstudioapi)
+library(here)
+library(styler)
+library(lintr)
+```
+
+# Merge Counts
+```{r define file paths}
+counts_dir <- "/data/scratch/flanary/Sen_13cRA_RNA/counts"
+sample_file <- "/home/flanary/Projects/RA_Resistance/Sen_13cRA_RNA/processing/samples.txt"
+```
+
+```{r sample vector}
+samples <- readLines(sample_file)
+```
+
+```{r retrieve counts for each sample}
+# Initialize an empty list to store counts
+counts_list <- list()
+
+# Loop through sample subdirectories
+for (i in samples) {
+  # Define filepath
+  counts_file <- file.path(counts_dir, i, "counts.txt")
+  
+  # Read in the counts file
+  counts <- fread(counts_file, header = TRUE)
+  colnames(counts) <- c("gene_id", i)
+  
+  # Make set row names to gene ids
+  counts_list[[i]] <- counts
+}
+```
+
+```{r merge the counts list}
+merged_counts <- purrr::reduce(counts_list, full_join, by = "gene_id") |>
+  as.data.frame()
+```
+
+```{r add gene names to the matrix}
+# Load gtf file with annotations
+gtf_file <- "/data/project/sen-lab/genome/hg38/gencode.v22.annotation.gtf"
+gtf <- fread(gtf_file, header = FALSE, sep = "\t", data.table = FALSE)
+
+# Format the gtf file into a table for mapping gene names to gene ids
+mapping_df <- gtf |> 
+  filter(V3 == "gene")|> 
+  mutate(
+    gene_id = sub(".*gene_id \"([^\"]+)\".*", "\\1", V9),
+    gene_name = sub(".*gene_name \"([^\"]+)\".*", "\\1", V9)
+  ) |>
+  dplyr::select(gene_id, gene_name) |>
+  distinct(gene_id, gene_name)
+
+# Add gene_names
+merged_counts$gene_name <- mapping_df$gene_name[match(merged_counts$gene_id, mapping_df$gene_id)]
+
+# Move gene names to the front
+merged_counts <- merged_counts |>
+  relocate(gene_name, .after = gene_id)
+```
+
+```{r save the counts}
+write.table(
+  merged_counts,
+  here("Sen_13cRA_RNA", "data", "raw_counts_annotated.txt"),
+  sep = "\t",
+  row.names = TRUE,
+  col.names = TRUE,
+  quote = FALSE
+)
+```
+
+```{r format the merged counts}
+rownames(merged_counts) <- merged_counts$gene_id
+merged_counts <- merged_counts[, colnames(merged_counts) %in% samples]
+```
+
+```{r save the counts}
+write.table(
+  merged_counts,
+  here("Sen_13cRA_RNA", "data", "raw_counts.txt"),
+  sep = "\t",
+  row.names = TRUE,
+  col.names = TRUE,
+  quote = FALSE
+)
+```
+
+# FPKM-Normalize Counts
+```{r format the gtf file}
+colnames(gtf) <- c("seqname", "source", "feature", "start", "end", "score", "strand", "frame", "attribute")
+
+gtf_exons <- gtf |>
+  filter(feature == "exon") |>
+  mutate(
+    gene_id = sub(".*gene_id \"([^\"]+)\".*", "\\1", attribute),
+    gene_name = sub(".*gene_name \"([^\"]+)\".*", "\\1", attribute)
+  )
+```
+
+```{r calculate gene lengths}
+# Calculate exon lengths and sum them per gene
+gene_lengths <- gtf_exons |>
+  mutate(length = end - start + 1) |>
+  group_by(gene_id) %>%
+  summarise(total_length = sum(length), .groups = "drop")
+```
+
+```{r make sure gene ids match between counts and gene lengths}
+# Check gene ids
+identical(rownames(merged_counts), gene_lengths$gene_id)  # FALSE
+
+# Ensure gene lengths match the counts matrix
+## Keep genes in the counts matrix
+gene_lengths <- gene_lengths |>
+  filter(gene_id %in% rownames(merged_counts))  
+## Match row order
+gene_lengths <- gene_lengths[match(rownames(merged_counts), gene_lengths$gene_id), ]  
+
+# Check gene ids again
+identical(rownames(merged_counts), gene_lengths$gene_id)  # TRUE
+```
+
+```{r convert gene lengths from base pairs to kilobases}
+gene_lengths$length_kb <- gene_lengths$total_length / 1000
+```
+
+```{r fpkm normalization}
+fpkm <- apply(merged_counts, 2, function(sample_counts) {
+  total_counts <- sum(sample_counts)  # Total library size
+  (sample_counts * 1e6) / (gene_lengths$length_kb * total_counts)
+})
+```
+
+```{r save the fpkm_normalized counts}
+write.table(
+  fpkm,
+  here("Sen_13cRA_RNA", "data", "fpkm_counts.txt"),
+  sep = "\t",
+  row.names = TRUE,
+  col.names = TRUE,
+  quote = FALSE
+)
+```
+
+```{r add gene annotations to counts}
+fpkm$gene_id <- as.character(rownames(fpkm))
+
+fpkm$gene_name <- mapping_df$gene_name[match(fpkm$gene_id, mapping_df$gene_id)]
+
+fpkm <- fpkm |>
+  relocate(c("gene_id", "gene_name"))
+
+rownames(fpkm) <- NULL
+```
+
+```{r save the fpkm_normalized counts}
+write.table(
+  fpkm,
+  here("Sen_13cRA_RNA", "data", "fpkm_counts_annotated.txt"),
+  sep = "\t",
+  row.names = TRUE,
+  col.names = TRUE,
+  quote = FALSE
+)
+```
+
+# End of script
+```{r style code}
+script <- rstudioapi::getSourceEditorContext()$path
+style_file(script)
+lint(script)
+```
+
+```{r clean environment}
+rm(list = ls())
+gc()
+```

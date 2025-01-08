@@ -17,7 +17,6 @@
 ##### PACKAGES #####
 module load Anaconda3
 
-source ~/miniconda3/etc/profile.d/conda.sh
 conda activate featurecounts || { echo "Failed to activate Conda environment"; exit 1; }
 
 ##### VARIABLES #####

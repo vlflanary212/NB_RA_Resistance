@@ -51,8 +51,10 @@ region_table <- data.frame(
 
 write_csv(
   region_table,
-  here("Sen_13cRA_ATAC", "processing", "07_downstream_qc",
-       "num_region_table.csv")
+  here(
+    "Sen_13cRA_ATAC", "processing", "07_downstream_qc",
+    "num_region_table.csv"
+  )
 )
 ```
 
@@ -68,8 +70,10 @@ num_fragments_df <- data.frame(
 
 write_csv(
   num_fragments_df,
-  here("Sen_13cRA_ATAC", "processing", "07_downstream_qc",
-       "num_fragments_per_sample.csv")
+  here(
+    "Sen_13cRA_ATAC", "processing", "07_downstream_qc",
+    "num_fragments_per_sample.csv"
+  )
 )
 ```
 
@@ -78,20 +82,21 @@ write_csv(
 sample_list <- getSamples(dsa)
 
 plot_list <- list()
-for(i in seq_along(sample_list)) {
-  
+for (i in seq_along(sample_list)) {
   p <- plotInsertSizeDistribution(
     dsa, sample_list[i]
   ) + ggtitle(sample_list[i])
-  
+
   plot_list[[sample_list[i]]] <- p
-  
+
   print(paste0("Fragment distribution plot for ", sample_list[i], " done"))
 }
 
 pdf(
-  here("Sen_13cRA_ATAC", "processing", "07_downstream_qc", 
-       "fragment_size_distribution_plots.pdf"),
+  here(
+    "Sen_13cRA_ATAC", "processing", "07_downstream_qc",
+    "fragment_size_distribution_plots.pdf"
+  ),
   height = 6, width = 9
 )
 
@@ -118,7 +123,7 @@ seqlevels(tss_gr_filt) <- intersect(seqlevels(tss_gr), chromosomes)
 # Initialize list for plots and data frame for TSS enrichment scores
 plot_list <- list()
 tsse_scores <- data.frame(
-  sample = character(), tsse_score = numeric(), 
+  sample = character(), tsse_score = numeric(),
   tsse_score_smoothed = numeric(), stringsAsFactors = FALSE
 )
 
@@ -126,32 +131,34 @@ tsse_scores <- data.frame(
 for (i in seq_along(sample_list)) {
   # Compute TSS enrichment
   tsse <- getTssEnrichment(dsa, sample_list[i], tss_gr_filt)
-  
+
   # Extract TSS enrichment value
   enrichment_score <- tsse$tssEnrichment
-  smoothed_score <-tsse$tssEnrichment.smoothed
-  
+  smoothed_score <- tsse$tssEnrichment.smoothed
+
   # Add to the plot list
   plot_list[[sample_list[i]]] <- tsse$plot + ggtitle(sample_list[i])
-  
+
   # Add score to the data frame
   tsse_scores <- rbind(
-    tsse_scores, 
+    tsse_scores,
     data.frame(
-      sample = sample_list[i], 
+      sample = sample_list[i],
       tsse_score = enrichment_score,
       tsse_score_smoothed = smoothed_score
-      )
     )
-  
+  )
+
   # Print progress
   print(paste0("TSSE Plot for ", sample_list[i], " done"))
 }
 
 # Save plots to a PDF
 pdf(
-  here("Sen_13cRA_ATAC", "processing", "07_downstream_qc", 
-       "tss_enrichment_plots.pdf"),
+  here(
+    "Sen_13cRA_ATAC", "processing", "07_downstream_qc",
+    "tss_enrichment_plots.pdf"
+  ),
   height = 6, width = 9
 )
 ggarrange(plotlist = plot_list, ncol = 4, nrow = 2)
@@ -159,50 +166,13 @@ dev.off()
 
 # Save TSS enrichment scores to a CSV file
 write.csv(
-  tsse_scores, 
-  file = here("Sen_13cRA_ATAC", "processing", "07_downstream_qc", "tss_enrichment_scores.csv"), 
+  tsse_scores,
+  file = here("Sen_13cRA_ATAC", "processing", "07_downstream_qc", "tss_enrichment_scores.csv"),
   row.names = FALSE
 )
 
 print("TSS enrichment scores saved.")
 ```
-
-```{r}
-tsse_scores <- data.frame(
-  sample = character(), tsse_score = numeric(), 
-  tsse_score_smoothed = numeric(), stringsAsFactors = FALSE
-)
-
-# Loop through sample list
-for (i in seq_along(sample_list)) {
-  # Compute TSS enrichment
-  tsse <- getTssEnrichment(dsa, sample_list[i], tss_gr_filt)
-  
-  # Extract TSS enrichment value
-  enrichment_score <- tsse$tssEnrichment
-  smoothed_score <-tsse$tssEnrichment.smoothed
-  
-  # Add score to the data frame
-  tsse_scores <- rbind(
-    tsse_scores, 
-    data.frame(
-      sample = sample_list[i], 
-      tsse_score = enrichment_score,
-      tsse_score_smoothed = smoothed_score
-      )
-    )
-}
-
-write.csv(
-  tsse_scores, 
-  file = here("Sen_13cRA_ATAC", "processing", "07_downstream_qc", "tss_enrichment_scores.csv"), 
-  row.names = FALSE
-)
-
-print("TSS enrichment scores saved.")
-```
-
-# Fraction of Reads in Peaks
 
 # Genome-Wide Tn5 Insertion Counts
 ```{r region-by-sample matrix with Tn5 insertion counts}
@@ -214,15 +184,15 @@ tn5_inserts_distal <- getCounts(dsa, "distal_regions")
 
 # distribution of tn5_insertion counts by region
 pdf(
-  here("Sen_13cRA_ATAC", "processing", "07_downstream_qc",
-       "tn5_insertion_counts_by_region.pdf")
+  here(
+    "Sen_13cRA_ATAC", "processing", "07_downstream_qc",
+    "tn5_insertion_counts_by_region.pdf"
+  )
 )
 
 par(mfrow = c(2, 2))
 hist(tn5_inserts_promoters, main = "Tn5 Inserts in Promoter Regions")
-hist(log10(tn5_inserts_promoters), main = "Tn5 Inserts in Promoter Regions")
 hist(tn5_inserts_distal, main = "Tn5 Inserts in Distal Regions")
-hist(log10(tn5_inserts_distal), main = "Tn5 Inserts in Distal Regions")
 
 dev.off()
 ```
