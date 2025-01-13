@@ -1,0 +1,152 @@
+---
+title: "Differential Expression Analysis"
+author: "Victoria Flanary"
+date: "2025-01-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Objective
+Run DESeq2 for RNA-seq data of 13cRA-treated neuroblastoma lines.
+
+# Set-up
+```{r set seed}
+set.seed(42)
+```
+
+```{r load packages}
+library(DESeq2)
+library(tidyverse)
+library(rstudioapi)
+library(here)
+library(styler)
+library(lintr)
+```
+
+```{r load data}
+counts <- read.table(
+  here("Sen_13cRA_RNA", "data", "raw_counts.txt")
+)
+```
+
+# Create colData
+```{r}
+samples <- readLines(
+  here("Sen_13cRA_RNA", "processing", "samples.txt")
+)
+
+sample_df<- data_frame(
+  sample = samples
+)
+
+coldata <- sample_df |>
+  separate(sample, into = c("cell_line", "replicate"), sep = "_")
+
+mycn_status <- c(rep("MYCN_amp", 2), rep("MYCN_nonamp", 6))
+phenotype <- c("ADR", "ADR", "MES", "MES", "MES", "MES", "ADR", "ADR")
+
+coldata <- cbind(sample_df, coldata, phenotype, mycn_status)
+row.names(coldata) <- coldata$sample
+```
+
+# Ensure coldata matches the counts cols
+```{r}
+counts <- counts[, match(coldata$sample, colnames(counts))]
+identical(coldata$sample, colnames(counts))  # TRUE
+```
+
+# Assign case and control
+```{r}
+coldata$group <- "control"
+coldata$group[coldata$phenotype == "MES"] <- "case"
+```
+
+# Filter by row mean and variance
+```{r}
+counts_filt <- counts |>
+  mutate(
+    row_var = rowVars(data.matrix(counts)),
+    row_mean = rowMeans(data.matrix(counts))
+  ) |>
+  filter(
+    row_var  > 0 & row_mean >= 10
+  )
+```
+
+```{r rm stats columns}
+counts_filt <- counts_filt[, colnames(counts_filt) %in% coldata$sample]
+```
+
+# Make the DESeq object
+```{r}
+dds <- DESeqDataSetFromMatrix(
+  countData = as.matrix(counts_filt),
+  colData =  coldata,
+  design = ~ mycn_status + group
+)
+```
+
+# Relevel
+```{r}
+dds$group <- relevel(dds$group, "control")
+```
+
+# Perform the Differential
+```{r}
+dds <- DESeq(dds, test = "Wald")
+```
+
+# Annotate Results in a Dataframe
+```{r annotate results in a df}
+res <- as.data.frame(results(dds, contrast = c("group", "case", "control")))
+gene_id <- rownames(res)
+res <- cbind(gene_id, res)
+```
+
+# Filter the Results
+```{r split the results by significance and direction}
+# split results by significance
+sig <- res[which(res$padj <= 0.05 & abs(res$log2FoldChange) >= 1.5), ]
+nonsig <- res[which(res$padj > 0.05 & abs(res$log2FoldChange) < 1.5), ]
+
+# annotate significant differential peaks by up and down
+sig$reg <- "down"
+sig$reg[sig$log2FoldChange >= 1.5] <- "up"
+```
+
+```{r count how many differential peaks are up vs down}
+tally <- sig |>
+  group_by(reg) |>
+  tally() |>
+  data.frame()
+```
+
+```{r save differential results}
+write_csv(
+  sig, 
+  here("Sen_13cRA_RNA", "analysis", "deseq2", "mes_sig_results.csv")
+  )
+
+write_csv(
+  tally, 
+  here("Sen_13cRA_RNA", "analysis", "deseq2", "mes_sig_results_tally.csv")
+  )
+```
+
+# Visualize Results
+
+
+# End of script
+```{r style code}
+script <- rstudioapi::getSourceEditorContext()$path
+style_file(script)
+lint(script)
+```
+
+```{r clean environment}
+rm(list = ls())
+gc()
+```

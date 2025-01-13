@@ -1,0 +1,444 @@
+---
+title: "13cRA MTT Assay"
+author: "Victoria Flanary"
+date: "2025-01-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Objective
+Analyze MTT assay results for 13cRA-treated neuroblastoma cell lines. 
+
+# Set-up
+```{r load packages}
+library(tidyverse)
+library(ggpubr)
+library(rstudioapi)
+library(here)
+library(styler)
+library(lintr)
+```
+
+```{r load the results}
+mtt_results <- read_csv(
+  here("MTT_Assay", "13cRA_MTT_Assay_Results.csv")
+)
+```
+
+```{r format columns}
+mtt_results$cell_line <- factor(
+  mtt_results$cell_line,
+  levels = unique(mtt_results$cell_line)
+)
+
+mtt_results$timepoint <- factor(
+  mtt_results$timepoint,
+  levels = unique(mtt_results$timepoint)
+)
+
+mtt_results$date <- as.factor(mtt_results$date)
+
+mtt_results$concentration <- paste0(mtt_results$concentration, " microM")
+mtt_results$concentration <- factor(
+  mtt_results$concentration,
+  levels = c("1 microM", "5 microM", "10 microM")
+)
+
+mtt_results$pct_viability <- as.numeric(
+  sub("%", "", mtt_results$pct_viability)
+) / 100
+```
+
+# Batch Effects by Biological Replicate
+```{r}
+batch_df <- mtt_results |>
+  mutate(group = paste0(cell_line, "_", timepoint)) |>
+  relocate(group, .after = timepoint) |>
+  group_by(group) |>
+  arrange(cell_line, concentration) |> 
+  ungroup()
+```
+
+```{r}
+plot_list <- list()
+
+for (i in unique(batch_df$group)) {
+  # Extract group conditions
+  line <- sapply(strsplit(i, "_"), `[`, 1)
+  time <- sapply(strsplit(i, "_"), `[`, 2)
+  
+   # Filter the data for the current group
+  group_df <- subset(batch_df, group == i)
+  
+  # Generate the plot
+  p <- ggplot(group_df, aes(x = concentration, y = pct_viability, fill = date)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(
+    title = paste0(line, " Treated with 13cRA for ", time),
+    x = "Concentration of 13cRA",
+    y = "Percent Viability",
+    fill = "Experiment Date"
+  ) +
+  theme_minimal()
+  
+  # Add plot to plot list
+  plot_list[[i]] <- p
+}
+
+pdf(
+  here("MTT_Assay", "mtt_results_by_biological_replicates_all.pdf"),
+  height = 12, width = 12
+)
+
+ggarrange(plotlist = plot_list, ncol = 3, nrow = 4)
+
+dev.off()
+```
+
+```{r avg pct_viability per condition and date across concentrations}
+avg_batch_df <- batch_df |>
+  group_by(group, date) |>
+  mutate(group1 = paste0(group, "_", date)) |>
+  relocate(group1, .after = group) |>
+  mutate(mean_pct_viability = mean(pct_viability)) |>
+  arrange(group) |>
+  ungroup()
+```
+
+```{r}
+plot_list <- list()
+
+for (i in unique(avg_batch_df$group)) {
+  # Extract group conditions
+  line <- sapply(strsplit(i, "_"), `[`, 1)
+  time <- sapply(strsplit(i, "_"), `[`, 2)
+  
+   # Filter the data for the current group
+  group_df <- subset(avg_batch_df, group == i)
+  
+  # Generate the plot
+  p <- ggplot(group_df, aes(x = date, y = mean_pct_viability, fill = date)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(
+    title = paste0(line, " Treated with 13cRA for ", time),
+    x = NULL,
+    y = "Percent Viability",
+    fill = "Experiment Date"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
+  # Add plot to plot list
+  plot_list[[i]] <- p
+}
+
+pdf(
+  here("MTT_Assay", "mtt_results_by_biological_replicates_avg.pdf"),
+  height = 12, width = 12
+)
+
+ggarrange(plotlist = plot_list, ncol = 3, nrow = 4)
+
+dev.off()
+```
+
+# Filter Outlier Replicate
+```{r rm the 20241121 plate}
+mtt_results_filt <- mtt_results |>
+  filter(date != "20241121")
+
+mtt_results_filt$date <- factor(
+  mtt_results_filt$date,
+  levels = unique(mtt_results_filt$date)
+)
+```
+
+# Average Replicates
+```{r with and without outlier plate}
+avg_mtt_results1 <- mtt_results |>
+  group_by(cell_line, timepoint, concentration) |>
+  arrange(cell_line, timepoint, concentration) |>
+  mutate(mean_pct_viability = mean(pct_viability)) |>
+  ungroup() |>
+  dplyr::select(cell_line, timepoint, concentration, mean_pct_viability) |>
+  distinct()
+
+avg_mtt_results2 <- mtt_results_filt |>
+  group_by(cell_line, timepoint, concentration) |>
+  arrange(cell_line, timepoint, concentration) |>
+  mutate(mean_pct_viability = mean(pct_viability)) |>
+  ungroup() |>
+  dplyr::select(cell_line, timepoint, concentration, mean_pct_viability) |>
+  distinct()
+```
+
+```{r save final results df}
+write_csv(
+  avg_mtt_results1,
+  here("MTT_Assay", "avg_mtt_results_all.csv")
+)
+
+write_csv(
+  avg_mtt_results2,
+  here("MTT_Assay", "avg_mtt_results_filt.csv")
+)
+```
+
+# Analysis
+## 13cRA Response with Increasing Time
+### Alldata
+```{r}
+plotting_df1 <- avg_mtt_results1 |>
+  mutate(group = paste0(cell_line, "_", timepoint)) |>
+  relocate(group, .after = timepoint)
+```
+
+```{r}
+plot_list <- list()
+
+# Loop through each cell line
+for (line in unique(plotting_df1$cell_line)) {
+  
+  # Filter data for the current cell line
+  line_df <- subset(plotting_df1, cell_line == line)
+  
+  # Generate the plot with all timepoints on the same plot
+  p <- ggplot(line_df, aes(x = timepoint, y = mean_pct_viability, fill = factor(concentration))) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(
+      title = paste0("Cell Line: ", line),
+      x = "Timepoint",
+      y = "Mean Percent Viability",
+      fill = "13cRA Concentration"
+    ) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
+  # Add the plot to the plot list
+  plot_list[[line]] <- p
+}
+
+# Save all plots to a PDF
+pdf(
+  here("MTT_Assay", "avg_mtt_results_timepoint_all.pdf"),
+  height = 5, width = 8
+)
+
+# Arrange all plots in a grid
+ggarrange(plotlist = plot_list, ncol = 2, nrow = 2)
+
+dev.off()
+```
+
+### Filtered
+```{r}
+plotting_df2 <- avg_mtt_results2 |>
+  mutate(group = paste0(cell_line, "_", timepoint)) |>
+  relocate(group, .after = timepoint)
+```
+
+```{r}
+plot_list <- list()
+
+# Loop through each cell line
+for (line in unique(plotting_df2$cell_line)) {
+  
+  # Filter data for the current cell line
+  line_df <- subset(plotting_df2, cell_line == line)
+  
+  # Generate the plot with all timepoints on the same plot
+  p <- ggplot(line_df, aes(x = timepoint, y = mean_pct_viability, fill = factor(concentration))) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(
+      title = paste0("Cell Line: ", line),
+      x = "Timepoint",
+      y = "Mean Percent Viability",
+      fill = "13cRA Concentration"
+    ) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
+  # Add the plot to the plot list
+  plot_list[[line]] <- p
+}
+
+# Save all plots to a PDF
+pdf(
+  here("MTT_Assay", "avg_mtt_results_timepoint_filt.pdf"),
+  height = 5, width = 8
+)
+
+# Arrange all plots in a grid
+ggarrange(plotlist = plot_list, ncol = 2, nrow = 2)
+
+dev.off()
+```
+
+## 13cRA Response by Concentration
+### Alldata
+```{r}
+plot_list <- list()
+
+# Loop through each cell line
+for (line in unique(plotting_df1$cell_line)) {
+  
+  # Filter data for the current cell line
+  line_df <- subset(plotting_df1, cell_line == line)
+  
+  # Generate the plot with all timepoints on the same plot
+  p <- ggplot(line_df, aes(x = concentration, y = mean_pct_viability, fill = factor(timepoint))) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(
+      title = paste0("Cell Line: ", line),
+      x = "13cRA Concentration",
+      y = "Mean Percent Viability",
+      fill = "Time Point"
+    ) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
+  # Add the plot to the plot list
+  plot_list[[line]] <- p
+}
+
+# Save all plots to a PDF
+pdf(
+  here("MTT_Assay", "avg_mtt_results_concentration_all.pdf"),
+  height = 5, width = 8
+)
+
+# Arrange all plots in a grid
+ggarrange(plotlist = plot_list, ncol = 2, nrow = 2)
+
+dev.off()
+```
+
+### Filtered
+```{r}
+plot_list <- list()
+
+# Loop through each cell line
+for (line in unique(plotting_df2$cell_line)) {
+  
+  # Filter data for the current cell line
+  line_df <- subset(plotting_df2, cell_line == line)
+  
+  # Generate the plot with all timepoints on the same plot
+  p <- ggplot(line_df, aes(x = concentration, y = mean_pct_viability, fill = factor(timepoint))) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(
+      title = paste0("Cell Line: ", line),
+      x = "13cRA Concentration",
+      y = "Mean Percent Viability",
+      fill = "Time Point"
+    ) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
+  # Add the plot to the plot list
+  plot_list[[line]] <- p
+}
+
+# Save all plots to a PDF
+pdf(
+  here("MTT_Assay", "avg_mtt_results_concentration_filt.pdf"),
+  height = 5, width = 8
+)
+
+# Arrange all plots in a grid
+ggarrange(plotlist = plot_list, ncol = 2, nrow = 2)
+
+dev.off()
+```
+
+## 13cRA Response by Cell Line
+### Alldata
+```{r}
+plot_list <- list()  # Initialize the plot list
+
+# Loop through each timepoint
+for (timepoint in unique(plotting_df1$timepoint)) {
+  
+  # Filter data for the current timepoint
+  timepoint_df <- subset(plotting_df1, timepoint == timepoint)
+  
+  # Generate the plot for the current timepoint
+  p <- ggplot(timepoint_df, aes(x = factor(concentration), y = mean_pct_viability, fill = cell_line)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(
+      title = paste0("13cRA Response at ", timepoint),
+      x = "13cRA Concentration",
+      y = "Mean Percent Viability",
+      fill = "Cell Line"
+    ) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
+  # Add the plot to the plot list
+  plot_list[[timepoint]] <- p
+}
+
+# Save all plots to a PDF
+pdf(
+  here("MTT_Assay", "avg_mtt_results_cell_line_all.pdf"),
+  height = 9, width = 7
+)
+
+# Arrange all plots in a grid
+ggarrange(plotlist = plot_list, ncol = 1)
+
+dev.off()
+```
+
+### Filtered
+```{r}
+plot_list <- list()  # Initialize the plot list
+
+# Loop through each timepoint
+for (timepoint in unique(plotting_df2$timepoint)) {
+  
+  # Filter data for the current timepoint
+  timepoint_df <- subset(plotting_df2, timepoint == timepoint)
+  
+  # Generate the plot for the current timepoint
+  p <- ggplot(timepoint_df, aes(x = factor(concentration), y = mean_pct_viability, fill = cell_line)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(
+      title = paste0("13cRA Response at ", timepoint),
+      x = "13cRA Concentration",
+      y = "Mean Percent Viability",
+      fill = "Cell Line"
+    ) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
+  # Add the plot to the plot list
+  plot_list[[timepoint]] <- p
+}
+
+# Save all plots to a PDF
+pdf(
+  here("MTT_Assay", "avg_mtt_results_cell_line_filt.pdf"),
+  height = 9, width = 7
+)
+
+# Arrange all plots in a grid
+ggarrange(plotlist = plot_list, ncol = 1)
+
+dev.off()
+```
+
+# End of script
+```{r style code}
+script <- rstudioapi::getSourceEditorContext()$path
+style_file(script)
+lint(script)
+```
+
+```{r clean environment}
+rm(list = ls())
+gc()
+```

@@ -1,0 +1,270 @@
+---
+title: "MTT Assay Analysis"
+author: "Victoria Flanary"
+date: "2025-01-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Objective
+Analyze results from the MTT assay experiments of neuroblastoma cell lines
+treated with 3 different concentrations of 13cRA at 3 different timepoints.
+Experiments were conducted by Ian Doty and results were analyzed by Victoria
+Flanary.
+
+# Set-up
+```{r load packages}
+library(tidyverse)
+library(rstudioapi)
+library(here)
+library(styler)
+library(lintr)
+```
+
+```{r load packages}
+library(tidyverse)
+library(ggpubr)
+library(rstudioapi)
+library(here)
+library(styler)
+library(lintr)
+```
+
+```{r load the results}
+mtt_results <- read_csv(
+  here("MTT_Assay", "13cRA_MTT_Assay_Results.csv")
+)
+```
+
+```{r format columns}
+mtt_results$cell_line <- factor(
+  mtt_results$cell_line,
+  levels = unique(mtt_results$cell_line)
+)
+
+mtt_results$timepoint <- factor(
+  mtt_results$timepoint,
+  levels = unique(mtt_results$timepoint)
+)
+
+mtt_results$date <- as.factor(mtt_results$date)
+
+mtt_results$concentration <- paste0(mtt_results$concentration, " microM")
+mtt_results$concentration <- factor(
+  mtt_results$concentration,
+  levels = c("1 microM", "5 microM", "10 microM")
+)
+
+mtt_results$pct_viability <- as.numeric(
+  sub("%", "", mtt_results$pct_viability)
+) / 100
+```
+
+```{r save the formatted results}
+write_csv(
+  mtt_results,
+  here("MTT_Assay", "mtt_assay_results_formatted.csv")
+)
+```
+
+# Visualize Biological Replicates
+## All Replicates
+```{r}
+batch_df <- mtt_results |>
+  mutate(group = paste0(cell_line, "_", timepoint)) |>
+  relocate(group, .after = timepoint) |>
+  group_by(group) |>
+  arrange(cell_line, concentration) |> 
+  ungroup()
+```
+
+```{r}
+plot_list <- list()
+
+for (i in unique(batch_df$group)) {
+  # Extract group conditions
+  line <- sapply(strsplit(i, "_"), `[`, 1)
+  time <- sapply(strsplit(i, "_"), `[`, 2)
+  
+   # Filter the data for the current group
+  group_df <- subset(batch_df, group == i)
+  
+  # Generate the plot
+  p <- ggplot(group_df, aes(x = concentration, y = pct_viability, fill = date)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(
+    title = paste0(line, " Treated with 13cRA for ", time),
+    x = "Concentration of 13cRA",
+    y = "Percent Viability",
+    fill = "Experiment Date"
+  ) +
+  theme_minimal()
+  
+  # Add plot to plot list
+  plot_list[[i]] <- p
+}
+
+pdf(
+  here("MTT_Assay", "mtt_results_by_biological_replicates_all.pdf"),
+  height = 12, width = 12
+)
+
+ggarrange(plotlist = plot_list, ncol = 3, nrow = 4)
+
+dev.off()
+```
+
+# Remove the problematic plate
+```{r}
+mtt_results_filt <- mtt_results |>
+  filter(date != "20241121")
+```
+
+# Reponse Across Cell Lines
+```{r}
+mean_results_filt <- mtt_results_filt |>
+  group_by(cell_line, timepoint, concentration)|>
+  mutate(group = paste0(cell_line, "_", timepoint, "_", concentration)) |>
+  relocate(group, .after = timepoint) |>
+  arrange(group) |>
+  mutate(mean_pct_viability = mean(pct_viability)) |>
+  ungroup()
+```
+
+```{r}
+plot_list <- list()
+
+for (i in levels(mean_results_filt$concentration)) {
+  # Filter for how you want to split the data
+  group_df <- subset(mean_results_filt, concentration = i)
+  # Generate the plot
+  p <- ggplot(
+    mean_results_filt, 
+    aes(x = factor(timepoint), y = mean_pct_viability, fill = cell_line)
+  ) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(
+      title = paste0("Cell Lines Treated with ", i, " 13cRA"),
+      x = NULL,
+      y = "Mean Percent Viability",
+      fill = "Cell Line"
+    ) +
+  theme_minimal()
+  
+  # Add plot to plot list
+  plot_list[[i]] <- p
+}
+
+pdf(
+  here("MTT_Assay", "mtt_results_by_cell_line.pdf"),
+  height = 9, width = 6
+)
+
+ggarrange(plotlist = plot_list, ncol = 1, nrow = 3)
+
+dev.off()
+```
+
+# Response Across Phenotype
+```{r}
+mean_phenotype_filt <- mtt_results_filt |>
+  group_by(phenotype, timepoint, concentration)|>
+  mutate(group = paste0(phenotype, "_", timepoint, "_", concentration)) |>
+  relocate(group, .after = timepoint) |>
+  arrange(group) |>
+  mutate(mean_pct_viability = mean(pct_viability)) |>
+  ungroup()
+```
+
+```{r}
+plot_list <- list()
+
+for (i in levels(mean_phenotype_filt$concentration)) {
+  # Filter for how you want to split the data
+  group_df <- subset(mean_phenotype_filt, concentration = i)
+  # Generate the plot
+  p <- ggplot(
+    mean_phenotype_filt, 
+    aes(x = factor(timepoint), y = mean_pct_viability, fill = phenotype)
+  ) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(
+      title = paste0("Neuroblastoma Phenotypes Treated with ", i, " 13cRA"),
+      x = NULL,
+      y = "Mean Percent Viability",
+      fill = "Phenotype"
+    ) +
+  theme_minimal()
+  
+  # Add plot to plot list
+  plot_list[[i]] <- p
+}
+
+pdf(
+  here("MTT_Assay", "mtt_results_by_phenotype.pdf"),
+  height = 9, width = 6
+)
+
+ggarrange(plotlist = plot_list, ncol = 1, nrow = 3)
+
+dev.off()
+```
+
+## Average Results by Replicate
+### With 20241121
+```{r}
+avg_batch_df <- batch_df |>
+  group_by(cell_line, timepoint, concentration) |>
+  mutate(group = paste0(cell_line, "_", timepoint, "_", concentration)) |>
+  arrange(group, concentration) |>
+  mutate(mean_pct_viability = mean(pct_viability)) |>
+  ungroup()
+
+```
+
+```{r}
+plot_list <- list()
+
+for (i in unique(avg_batch_df$group)) {
+   # Filter the data for the current group
+  group_df <- subset(avg_batch_df, group == i)
+  
+  # Generate the plot
+  p <- ggplot(group_df, aes(x = timepoint, y = avg_pct_viability, fill = concentration)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~ cell_line) +
+  labs(
+    x = "Timepoint",
+    y = "Percent Viability",
+    fill = "Concentration"
+  ) +
+  theme_minimal()
+  
+  # Add plot to plot list
+  plot_list[[i]] <- p
+}
+
+pdf(
+  here("MTT_Assay", "mtt_results_by_biological_replicates_avg.pdf"),
+  height = 12, width = 12
+)
+
+ggarrange(plotlist = plot_list, ncol = 1, nrow = 4)
+
+dev.off()
+```
+
+# End of script
+```{r style code}
+script <- rstudioapi::getSourceEditorContext()$path
+style_file(script)
+lint(script)
+```
+
+```{r clean environment}
+rm(list = ls())
+gc()
+```
