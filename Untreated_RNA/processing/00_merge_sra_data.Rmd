@@ -1,0 +1,82 @@
+---
+title: "Merge SRA Data"
+author: "Victoria Flanary"
+date: "2025-01-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Objectives
+- Merge SRR Accession Lists for untreated neuroblastoma cell line RNA-seq data
+from GEO (GSE89413, GSE83327, and GSE28875). 
+- Merge the SRA Run Tables for each of the above GEO accessions to generate
+a comprehensive metadata dataframe.
+
+# Set-up
+```{r load packages}
+library(tidyverse)
+library(rstudioapi)
+library(here)
+library(styler)
+library(lintr)
+```
+
+# SRR Accession Lists
+```{r read in srr acc lists}
+shep <- readLines(
+  here("Untreated_RNA", "docs", "GSE83327_SRR_Acc_List.txt")
+)
+
+nb_lines <- readLines(
+  here("Untreated_RNA", "docs", "GSE89413_SRR_Acc_List.txt")
+) 
+
+hncc <- readLines(
+  here("Untreated_RNA", "docs", "GSE28875_SRR_Acc_List.txt")
+)
+```
+
+```{r concatenate lists}
+merged_srr_acc <- c(shep, nb_lines, hncc)
+```
+
+```{r save the merged list}
+write.table(
+  merged_srr_acc,
+  here("Untreated_RNA", "docs", "merged_srr_acc_list.txt"),
+  sep = "\t",
+  row.names = FALSE,
+  col.names = FALSE,
+  quote = FALSE
+)
+```
+
+# SRA Run Tables
+```{r read in sra run tables}
+shep_metadata <- read_csv(
+  here("Untreated_RNA", "docs", "GSE83327_SraRunTable.csv")
+)
+
+nb_metadata <- read_csv(
+  here("Untreated_RNA", "docs", "GSE89413_SraRunTable.csv")
+)
+
+hncc_metadata <- read_csv(
+  here("Untreated_RNA", "docs", "GSE28875_SraRunTable.csv")
+)
+```
+
+# End of script
+```{r style code}
+script <- rstudioapi::getSourceEditorContext()$path
+style_file(script)
+lint(script)
+```
+
+```{r clean environment}
+rm(list = ls())
+gc()
+```
