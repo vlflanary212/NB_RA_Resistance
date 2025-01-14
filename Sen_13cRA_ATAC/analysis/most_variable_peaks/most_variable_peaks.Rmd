@@ -1,0 +1,125 @@
+---
+title: "Most Variable Peaks"
+author: "Victoria Flanary"
+date: "2025-01-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Objective
+Determine the top 5000 most variable peaks in the distal and intergenic regions
+for ATAC-seq data of 13cRA-treated neuroblastoma cell lines.
+
+# Set-up
+```{r load packages}
+library(tidyverse)
+library(data.table)
+library(matrixStats)
+library(circlize)
+library(ComplexHeatmap)
+library(ggsci)
+library(rstudioapi)
+library(here)
+library(styler)
+library(lintr)
+```
+
+```{r load data}
+distal_fpkm <- read_csv(
+  here("Sen_13cRA_ATAC", "data", "counts", "distal_fpkm_counts_formatted.csv")
+)
+
+metadata <- read_csv(
+  here("Sen_13cRA_ATAC", "data", "metadata.csv")
+)
+```
+
+# Format the Data
+```{r filter counts by row mean and variance}
+matrix <- distal_fpkm |> as.matrix()
+row_var <- rowVars(matrix)
+row_mean <- rowMeans(matrix)
+filt_matrix <- subset(matrix, row_var >= 1 & row_mean >= 1)
+```
+
+```{r filter again by row variance}
+filt_row_var <- rowVars(filt_matrix)
+```
+
+```{r select top 5000 most variable peaks}
+df <- as.data.frame(filt_matrix)
+top_5000 <- slice_max(df, n = 5000, order_by = filt_row_var)
+```
+
+```{r scale data}
+top_5000_scaled <- t(scale(t(top_5000)))
+```
+
+```{r plot top 5000 peaks on heatmap}
+# define color palettes
+heatmap_pal <- colorRamp2(c(-5, 0, 5), c("royalblue3", "white", "tomato2"))
+phenotype <- unique(metadata$phenotype)
+cluster_col <- c("chartreuse4", "darkorchid")
+mycn_status <- unique(metadata$mycn_status)
+mycn_col <- c("red3", "darkgray")
+anno_pal <- list(
+  "Phenotype" = setNames(cluster_col, phenotype),
+  "MYCN_Status" = setNames(mycn_col, mycn_status)
+)
+
+# heatmap annotation
+anno <- HeatmapAnnotation(
+  annotation_name_gp = gpar(fontsize = 12),
+  col = anno_pal, simple_anno_size = unit(3, "mm"),
+  annotation_name_side = "left",
+  Phenotype = as.factor(metadata$phenotype),
+  MYCN_Status = metadata$mycn_status
+)
+
+# plot heatmap
+pdf(
+  here("Sen_13cRA_ATAC", "analysis", "most_variable_peaks",
+       "top_5000_variable_peaks_heatmap.pdf"), 
+  height = 6, width = 8
+)
+
+Heatmap(top_5000_scaled,
+  name = "Scaled Variance",
+  show_row_names = FALSE, column_names_gp = gpar(fontsize = 12),
+  cluster_columns = TRUE, top_annotation = anno, col = heatmap_pal,
+  use_raster = FALSE
+)
+
+dev.off()
+```
+
+```{r plot as png}
+png(here(
+  "res", "atac-seq", "02_eda", "most_var", "top_5000_most_variable_peaks_heatmap.png"
+  ), height = 6, width = 8, units = "in", res = 1200
+)
+
+Heatmap(top_5000_scaled,
+  name = "Scaled Variance",
+  show_row_names = FALSE, column_names_gp = gpar(fontsize = 12),
+  cluster_columns = FALSE, top_annotation = anno, col = heatmap_pal,
+  use_raster = FALSE
+)
+
+dev.off()
+```
+
+# End of script
+```{r style code}
+script <- rstudioapi::getSourceEditorContext()$path
+style_file(script)
+lint(script)
+```
+
+```{r clean environment}
+rm(list = ls())
+gc()
+```

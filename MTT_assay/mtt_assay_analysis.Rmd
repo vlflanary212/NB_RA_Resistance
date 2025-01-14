@@ -18,14 +18,6 @@ Flanary.
 # Set-up
 ```{r load packages}
 library(tidyverse)
-library(rstudioapi)
-library(here)
-library(styler)
-library(lintr)
-```
-
-```{r load packages}
-library(tidyverse)
 library(ggpubr)
 library(rstudioapi)
 library(here)
@@ -160,11 +152,121 @@ for (i in levels(mean_results_filt$concentration)) {
 
 pdf(
   here("MTT_Assay", "mtt_results_by_cell_line.pdf"),
-  height = 9, width = 6
+  height = 3, width = 12
 )
 
-ggarrange(plotlist = plot_list, ncol = 1, nrow = 3)
+ggarrange(plotlist = plot_list, ncol = 3, nrow = 1)
 
+dev.off()
+```
+
+```{r}
+# Calculate mean and standard deviation
+mean_results_filt <- mtt_results_filt |> 
+  group_by(cell_line, timepoint, concentration) |> 
+  mutate(
+    group = paste0(cell_line, "_", timepoint, "_", concentration),
+    mean_pct_viability = mean(pct_viability),
+    sd_pct_viability = sd(pct_viability)  # Calculate standard deviation
+  ) |> 
+  relocate(group, .after = timepoint) |> 
+  arrange(group) |> 
+  ungroup()
+
+# Plot list initialization
+plot_list <- list()
+
+# Order concentrations explicitly (1 μM, 5 μM, 10 μM)
+ordered_concentrations <- c("1 microM", "5 microM", "10 microM")  # Replace with actual concentration levels if needed
+
+for (i in ordered_concentrations) {
+  # Filter for the current concentration
+  group_df <- subset(mean_results_filt, concentration == i)
+  
+  # Generate the plot
+  p <- ggplot(group_df, aes(x = factor(timepoint), y = mean_pct_viability, fill = cell_line)) +
+    geom_bar(stat = "identity", position = "dodge", color = "#343434") + # Bar plot with black border
+    geom_errorbar(
+      aes(ymin = mean_pct_viability - sd_pct_viability, ymax = mean_pct_viability + sd_pct_viability),
+      position = position_dodge(width = 0.9), width = 0.25, show.legend = FALSE
+    ) + # Add error bars without legend
+    geom_point(
+      aes(y = pct_viability), 
+      position = position_jitterdodge(jitter.width = 0.2, dodge.width = 0.9), 
+      size = 2, 
+      color = "dimgray"
+    ) + # Add points for individual replicates in dark gray
+    labs(
+      title = paste0("Cell Lines Treated with ", i, " 13cRA"),
+      x = NULL,
+      y = "Mean Percent Viability",
+      fill = "Cell Line"
+    ) +
+    theme_minimal() +
+    theme(legend.position = "right") # Adjust legend position
+  
+  # Add plot to plot list
+  plot_list[[i]] <- p
+}
+
+# Save all plots to a PDF
+pdf(here("MTT_Assay", "mtt_results_by_cell_line_error_bars.pdf"), height = 3, width = 12)
+ggarrange(plotlist = plot_list, ncol = 3, nrow = 1)
+dev.off()
+```
+
+```{r}
+# Calculate mean and standard deviation
+mean_results_filt <- mtt_results_filt |> 
+  group_by(phenotype, timepoint, concentration) |> 
+  mutate(
+    group = paste0(phenotype, "_", timepoint, "_", concentration),
+    mean_pct_viability = mean(pct_viability),
+    sd_pct_viability = sd(pct_viability)  # Calculate standard deviation
+  ) |> 
+  relocate(group, .after = timepoint) |> 
+  arrange(group) |> 
+  ungroup()
+
+# Plot list initialization
+plot_list <- list()
+
+# Order concentrations explicitly (1 μM, 5 μM, 10 μM)
+ordered_concentrations <- c("1 microM", "5 microM", "10 microM")  # Replace with actual concentration levels if needed
+
+for (i in ordered_concentrations) {
+  # Filter for the current concentration
+  group_df <- subset(mean_results_filt, concentration == i)
+  
+  # Generate the plot
+  p <- ggplot(group_df, aes(x = factor(timepoint), y = mean_pct_viability, fill = phenotype)) +
+    geom_bar(stat = "identity", position = "dodge", color = "#343434") + # Bar plot with black border
+    geom_errorbar(
+      aes(ymin = mean_pct_viability - sd_pct_viability, ymax = mean_pct_viability + sd_pct_viability),
+      position = position_dodge(width = 0.9), width = 0.25, show.legend = FALSE
+    ) + # Add error bars without legend
+    geom_point(
+      aes(y = pct_viability), 
+      position = position_jitterdodge(jitter.width = 0.2, dodge.width = 0.9), 
+      size = 2, 
+      color = "dimgray"
+    ) + # Add points for individual replicates in dark gray
+    labs(
+      title = paste0("Phenotypes Treated with ", i, " 13cRA"),
+      x = NULL,
+      y = "Mean Percent Viability",
+      fill = "Phenotype"
+    ) +
+    theme_minimal() +
+    theme(legend.position = "right") # Adjust legend position
+  
+  # Add plot to plot list
+  plot_list[[i]] <- p
+}
+
+# Save all plots to a PDF
+pdf(here("MTT_Assay", "mtt_results_by_phenotype_error_bars.pdf"), height = 3, width = 12)
+ggarrange(plotlist = plot_list, ncol = 3, nrow = 1)
 dev.off()
 ```
 

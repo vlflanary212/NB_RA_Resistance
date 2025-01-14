@@ -1,0 +1,332 @@
+---
+title: "Differential Peak Analysis"
+author: "Victoria Flanary"
+date: "2025-01-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Objective
+Run differential peak analysis for 13cRA-treated neuroblastoma lines.
+
+# Set-up
+```{r load packages}
+library(DESeq2)
+library(tidyverse)
+library(matrixStats)
+library(stats)
+library(rstudioapi)
+library(here)
+library(styler)
+library(lintr)
+```
+
+```{r load data}
+counts <- read_csv(
+  here("Sen_13cRA_ATAC", "data", "counts", "distal_regions_raw_counts.csv")
+) |> as.data.frame()
+
+coldata <- read.table(
+  here("Sen_13cRA_ATAC", "data", "coldata.txt")
+)
+```
+
+# Format the Data
+```{r move fragment column to rownames}
+rownames(counts) <- counts$fragments
+counts <- counts[, colnames(counts) != "fragments"]
+```
+
+```{r ensure rownames in coldata correspond to counts cols}
+counts <- counts[, match(rownames(coldata), colnames(counts))]
+identical(rownames(coldata), colnames(counts)) # TRUE
+```
+
+# Filter Counts by Row Mean and Variance
+```{r}
+cts <- counts |>
+  mutate(
+    row_var = rowVars(data.matrix(counts)),
+    row_mean = rowMeans(data.matrix(counts))
+  ) |>
+  filter(
+    row_var > 0 & row_mean >= 10
+  )
+
+cts <- cts[, colnames(cts) %in% rownames(coldata)]
+```
+
+# Format colData
+```{r convert all columns to factors}
+str(coldata)
+coldata <- as.data.frame(lapply(coldata, as.factor))
+str(coldata)
+```
+
+# Case = MES
+```{r set case and control}
+coldata$group <- "control"
+coldata$group[coldata$phenotype == "MES"] <- "case"
+```
+
+```{r generate the deseq object}
+dds <- DESeqDataSetFromMatrix(
+  countData = as.matrix(cts),
+  colData = coldata,
+  design = ~ mycn_status + group
+)
+```
+
+Cannot include both age_months and sex/mycn_status (latter form the same groups)
+in the design formula. Get the following error:
+Error in checkFullRank(modelMatrix) : 
+  the model matrix is not full rank, so the model cannot be fit as specified.
+  One or more variables or interaction terms in the design formula are linear
+  combinations of the others and must be removed.
+
+  Please read the vignette section 'Model matrix not full rank':
+
+  vignette('DESeq2')
+In addition: Warning message:
+In DESeqDataSet(se, design = design, ignoreRank) :
+  some variables in design formula are characters, converting to factors
+  
+*Only include mycn_status as a covariate, since it's the most biologically relevant*
+
+```{r relevel}
+dds$group <- relevel(dds$group, "control")
+```
+
+```{r run the dea}
+dds <- DESeq(dds, test = "Wald")
+```
+
+```{r annotate results in a df}
+res <- as.data.frame(results(dds, contrast = c("group", "case", "control")))
+peak_id <- rownames(res)
+res <- cbind(peak_id, res)
+rownames(res) <- NULL
+```
+
+```{r split the results by significance and direction}
+sig <- res[which(res$padj < 0.05 & abs(res$log2FoldChange) >= 1.5), ]
+nonsig <- res[which(res$padj >= 0.05 & abs(res$log2FoldChange) < 1.5), ]
+
+# annotate significant differential peaks by up and down
+sig$reg <- "down"
+sig$reg[sig$log2FoldChange >= 1.5] <- "up"
+```
+
+```{r count how many differential peaks are up vs down}
+tally <- sig |>
+  group_by(reg) |>
+  tally() |>
+  data.frame()
+```
+
+```{r save differential results}
+write_csv(
+  res,
+  here(
+    "Sen_13cRA_ATAC", "analysis", "diff_peak_analysis",
+    "mes_deseq2_all.csv"
+  )
+)
+
+write_csv(
+  sig,
+  here(
+    "Sen_13cRA_ATAC", "analysis", "diff_peak_analysis",
+    "mes_deseq2_sig.csv"
+  )
+)
+
+write_csv(
+  tally,
+  here(
+    "Sen_13cRA_ATAC", "analysis", "diff_peak_analysis",
+    "mes_deseq2_tally.csv"
+  )
+)
+```
+
+```{r identify top peaks}
+head_genes <- sig |>
+  arrange(desc(log2FoldChange)) |>
+  slice_head(n = 10)
+
+tail_genes <- sig |>
+  arrange(log2FoldChange) |>
+  slice_head(n = 10)
+
+top_genes <- bind_rows(head_genes, tail_genes)
+```
+
+```{r merge results back together}
+sig$significance <- "Significant"
+nonsig$significance <- "Not Significant"
+
+mes_results <- bind_rows(sig, nonsig)
+```
+
+```{r create the volcano plot}
+library(ggrepel)
+
+pdf(
+  here("Sen_13cRA_ATAC", "analysis", "diff_peak_analysis", "mes_volcano_plot.pdf"),
+  height = 7, width = 9
+)
+
+volcano_plot <- ggplot(mes_results, aes(x = log2FoldChange, y = -log10(padj))) +
+  geom_point(aes(color = significance), alpha = 0.5, size = 2) +
+  scale_color_manual(values = c("Significant" = "royalblue3", "Not Significant" = "gray")) +
+  labs(
+    title = "Peaks Enriched in MES Cells after 13cRA",
+    x = "Log2 Fold Change",
+    y = "-Log10 Adjusted P-value",
+    color = "Significance"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",            # Keep the legend on the right
+    plot.title = element_text(hjust = 0.5)  # Center the title
+  )
+
+print(volcano_plot)
+
+dev.off()
+```
+
+# Case = ADR
+```{r set case and control}
+coldata$group <- "control"
+coldata$group[coldata$phenotype == "ADR"] <- "case"
+```
+
+```{r generate the deseq object}
+dds <- DESeqDataSetFromMatrix(
+  countData = as.matrix(cts),
+  colData = coldata,
+  design = ~ mycn_status + group
+)
+```
+
+```{r relevel}
+dds$group <- relevel(dds$group, "control")
+```
+
+```{r run the dea}
+dds <- DESeq(dds, test = "Wald")
+```
+
+```{r annotate results in a df}
+res <- as.data.frame(results(dds, contrast = c("group", "case", "control")))
+peak_id <- rownames(res)
+res <- cbind(peak_id, res)
+rownames(res) <- NULL
+```
+
+```{r split the results by significance and direction}
+sig <- res[which(res$padj <= 0.05 & abs(res$log2FoldChange) >= 1.5), ]
+nonsig <- res[which(res$padj >= 0.05 & abs(res$log2FoldChange) < 1.5), ] 
+
+# annotate significant differential peaks by up and down
+sig$reg <- "down"
+sig$reg[sig$log2FoldChange >= 1.5] <- "up"
+```
+
+```{r count how many differential peaks are up vs down}
+tally <- sig |>
+  group_by(reg) |>
+  tally() |>
+  data.frame()
+```
+
+```{r save differential results}
+write_csv(
+  res,
+  here(
+    "Sen_13cRA_ATAC", "analysis", "diff_peak_analysis",
+    "adr_deseq2_all.csv"
+  )
+)
+
+write_csv(
+  sig,
+  here(
+    "Sen_13cRA_ATAC", "analysis", "diff_peak_analysis",
+    "adr_deseq2_sig.csv"
+  )
+)
+
+write_csv(
+  tally,
+  here(
+    "Sen_13cRA_ATAC", "analysis", "diff_peak_analysis",
+    "adr_deseq2_tally.csv"
+  )
+)
+```
+
+```{r identify top peaks}
+head_genes <- sig |>
+  arrange(desc(log2FoldChange)) |>
+  slice_head(n = 10)
+
+tail_genes <- sig |>
+  arrange(log2FoldChange) |>
+  slice_head(n = 10)
+
+top_genes <- bind_rows(head_genes, tail_genes)
+```
+
+```{r merge results back together}
+sig$significance <- "Significant"
+nonsig$significance <- "Not Significant"
+
+adr_results <- bind_rows(sig, nonsig)
+```
+
+```{r create the volcano plot}
+library(ggrepel)
+
+pdf(
+  here("Sen_13cRA_ATAC", "analysis", "diff_peak_analysis", "adr_volcano_plot.pdf"),
+  height = 7, width = 9
+)
+
+volcano_plot <- ggplot(adr_results, aes(x = log2FoldChange, y = -log10(padj))) +
+  geom_point(aes(color = significance), alpha = 0.5, size = 2) +
+  scale_color_manual(values = c("Significant" = "chartreuse4", "Not Significant" = "gray")) +
+  labs(
+    title = "Peaks Enriched in ADR Cells after 13cRA",
+    x = "Log2 Fold Change",
+    y = "-Log10 Adjusted P-value",
+    color = "Significance"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",            # Keep the legend on the right
+    plot.title = element_text(hjust = 0.5)  # Center the title
+  )
+
+print(volcano_plot)
+
+dev.off()
+```
+Should be exactly the same results, just in opposite directions.
+
+# End of script
+```{r style code}
+script <- rstudioapi::getSourceEditorContext()$path
+style_file(script)
+lint(script)
+```
+
+```{r clean environment}
+rm(list = ls())
+gc()
+```

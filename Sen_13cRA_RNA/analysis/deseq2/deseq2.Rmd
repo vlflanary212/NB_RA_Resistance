@@ -1,0 +1,379 @@
+---
+title: "Differential Expression Analysis"
+author: "Victoria Flanary"
+date: "2025-01-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Objective
+Run DESeq2 for RNA-seq data of 13cRA-treated neuroblastoma lines.
+
+# Set-up
+```{r load packages}
+library(DESeq2)
+library(tidyverse)
+library(rstudioapi)
+library(here)
+library(styler)
+library(lintr)
+```
+
+```{r load data}
+counts <- read.table(
+  here("Sen_13cRA_RNA", "data", "raw_counts.txt")
+)
+```
+
+# Create colData
+```{r}
+samples <- readLines(
+  here("Sen_13cRA_RNA", "processing", "samples.txt")
+)
+
+sample_df<- data_frame(
+  sample = samples
+)
+
+coldata <- sample_df |>
+  separate(sample, into = c("cell_line", "replicate"), sep = "_")
+
+mycn_status <- c(rep("MYCN_amp", 2), rep("MYCN_nonamp", 6))
+phenotype <- c("ADR", "ADR", "MES", "MES", "MES", "MES", "ADR", "ADR")
+
+coldata <- cbind(sample_df, coldata, phenotype, mycn_status)
+row.names(coldata) <- coldata$sample
+```
+
+# Ensure coldata matches the counts cols
+```{r}
+counts <- counts[, match(coldata$sample, colnames(counts))]
+identical(coldata$sample, colnames(counts))  # TRUE
+```
+
+# Filter by row mean and variance
+```{r}
+counts_filt <- counts |>
+  mutate(
+    row_var = rowVars(data.matrix(counts)),
+    row_mean = rowMeans(data.matrix(counts))
+  ) |>
+  filter(
+    row_var  > 0 & row_mean >= 10
+  )
+```
+
+```{r rm stats columns}
+counts_filt <- counts_filt[, colnames(counts_filt) %in% coldata$sample]
+```
+
+# Ensure coldata matches the counts cols
+```{r}
+counts_filt <- counts_filt[, match(coldata$sample, colnames(counts_filt))]
+identical(coldata$sample, colnames(counts_filt))  # TRUE
+```
+
+# Case: MES
+## Assign case and control
+```{r}
+coldata$group <- "control"
+coldata$group[coldata$phenotype == "MES"] <- "case"
+```
+
+## Make the DESeq object
+```{r}
+dds <- DESeqDataSetFromMatrix(
+  countData = as.matrix(counts_filt),
+  colData =  coldata,
+  design = ~ mycn_status + group
+)
+```
+
+## Relevel
+```{r}
+dds$group <- relevel(dds$group, "control")
+```
+
+## Perform the Differential
+```{r}
+dds <- DESeq(dds, test = "Wald")
+```
+
+## Annotate Results in a Dataframe
+```{r annotate results in a df}
+res <- as.data.frame(results(dds, contrast = c("group", "case", "control")))
+gene_id <- rownames(res)
+res <- cbind(gene_id, res)
+```
+
+# Filter the Results
+```{r split the results by significance and direction}
+# split results by significance
+sig <- res[which(res$padj < 0.05 & abs(res$log2FoldChange) >= 1.5), ]
+nonsig <- res[which(res$padj >= 0.05 & abs(res$log2FoldChange) < 1.5), ]
+
+# annotate significant differential peaks by up and down
+sig$reg <- "down"
+sig$reg[sig$log2FoldChange >= 1.5] <- "up"
+```
+
+```{r count how many differential peaks are up vs down}
+tally <- sig |>
+  group_by(reg) |>
+  tally() |>
+  data.frame()
+```
+
+```{r save differential results}
+write_csv(
+  res,
+  here("Sen_13cRA_RNA", "analysis", "deseq2", "mes_degs", "mes_all_results.csv")
+)
+
+write_csv(
+  nonsig, 
+  here("Sen_13cRA_RNA", "analysis", "deseq2", "mes_degs", "mes_nonsig_results.csv")
+  )
+
+write_csv(
+  sig, 
+  here("Sen_13cRA_RNA", "analysis", "deseq2", "mes_degs", "mes_sig_results.csv")
+  )
+
+write_csv(
+  tally, 
+  here("Sen_13cRA_RNA", "analysis", "deseq2", "mes_degs", "mes_sig_results_tally.csv")
+  )
+```
+
+# Visualize results
+```{r convert gene ids to gene names}
+library(org.Hs.eg.db)
+
+# Remove version numbers from gene IDs
+sig_clean <- sig |>
+  mutate(gene_id_clean = gsub("\\..*$", "", gene_id)) |>
+  relocate(gene_id_clean, .after = gene_id)
+
+# Get mapping for gene names
+gene_names <- AnnotationDbi::select(
+  org.Hs.eg.db,
+  keys = sig_clean$gene_id_clean,
+  columns = c("SYMBOL"),
+  keytype = "ENSEMBL"
+)
+
+# Merge gene names with DESeq2 results
+sig_anno <- sig_clean |>
+  left_join(gene_names, by = c("gene_id_clean" = "ENSEMBL")) |>
+  relocate(gene_name = SYMBOL, .after = gene_id_clean) |>
+  arrange(desc(log2FoldChange))
+
+# Identify top genes
+head_genes <- sig_anno |>
+  slice_head(n = 8)
+tail_genes <- sig_anno |>
+  arrange(padj) |>
+  slice_head(n = 7)
+top_genes <- bind_rows(head_genes, tail_genes)
+```
+
+```{r merge results back together}
+sig$significance <- "Significant"
+nonsig$significance <- "Not Significant"
+
+mes_results <- bind_rows(sig, nonsig)
+```
+
+```{r create the volcano plot}
+library(ggrepel)
+
+pdf(
+  here("Sen_13cRA_RNA", "analysis", "deseq2", "mes_degs", "volcano_plot.pdf"),
+  height = 7, width = 9
+)
+
+volcano_plot <- ggplot(mes_results, aes(x = log2FoldChange, y = -log10(padj))) +
+  geom_point(aes(color = significance), alpha = 0.5, size = 2) +
+  scale_color_manual(values = c("Significant" = "royalblue3", "Not Significant" = "gray")) +
+  geom_text_repel(
+    data = top_genes,
+    aes(label = gene_name),
+    size = 4,
+    box.padding = 0.5,
+    max.overlaps = 25
+  ) +
+  labs(
+    title = "Genes Enriched in MES Cells after 13cRA",
+    x = "Log2 Fold Change",
+    y = "-Log10 Adjusted P-value",
+    color = "Significance"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",            # Keep the legend on the right
+    plot.title = element_text(hjust = 0.5)  # Center the title
+  )
+
+print(volcano_plot)
+
+dev.off()
+```
+
+# Case: ADR
+## Assign case and control
+```{r}
+coldata$group <- "control"
+coldata$group[coldata$phenotype == "ADR"] <- "case"
+```
+
+## Make the DESeq object
+```{r}
+dds <- DESeqDataSetFromMatrix(
+  countData = as.matrix(counts_filt),
+  colData =  coldata,
+  design = ~ mycn_status + group
+)
+```
+
+## Relevel
+```{r}
+dds$group <- relevel(dds$group, "control")
+```
+
+## Perform the Differential
+```{r}
+dds <- DESeq(dds, test = "Wald")
+```
+
+## Annotate Results in a Dataframe
+```{r annotate results in a df}
+res <- as.data.frame(results(dds, contrast = c("group", "case", "control")))
+gene_id <- rownames(res)
+res <- cbind(gene_id, res)
+```
+
+# Filter the Results
+```{r split the results by significance and direction}
+# split results by significance
+sig <- res[which(res$padj < 0.05 & abs(res$log2FoldChange) >= 1.5), ]
+nonsig <- res[which(res$padj >= 0.05 & abs(res$log2FoldChange) < 1.5), ]
+
+# annotate significant differential peaks by up and down
+sig$reg <- "down"
+sig$reg[sig$log2FoldChange >= 1.5] <- "up"
+```
+
+```{r count how many differential peaks are up vs down}
+tally <- sig |>
+  group_by(reg) |>
+  tally() |>
+  data.frame()
+```
+
+```{r save differential results}
+write_csv(
+  res,
+  here("Sen_13cRA_RNA", "analysis", "deseq2", "adr_degs", "adr_all_results.csv")
+)
+
+write_csv(
+  nonsig, 
+  here("Sen_13cRA_RNA", "analysis", "deseq2", "adr_degs", "adr_nonsig_results.csv")
+  )
+
+write_csv(
+  sig, 
+  here("Sen_13cRA_RNA", "analysis", "deseq2", "adr_degs", "adr_sig_results.csv")
+  )
+
+write_csv(
+  tally, 
+  here("Sen_13cRA_RNA", "analysis", "deseq2", "adr_degs", "adr_sig_results_tally.csv")
+  )
+```
+
+# Visualize results
+```{r convert gene ids to gene names}
+library(org.Hs.eg.db)
+
+# Remove version numbers from gene IDs
+sig_clean <- sig |>
+  mutate(gene_id_clean = gsub("\\..*$", "", gene_id)) |>
+  relocate(gene_id_clean, .after = gene_id)
+
+# Get mapping for gene names
+gene_names <- AnnotationDbi::select(
+  org.Hs.eg.db,
+  keys = sig_clean$gene_id_clean,
+  columns = c("SYMBOL"),
+  keytype = "ENSEMBL"
+)
+
+# Merge gene names with DESeq2 results
+sig_anno <- sig_clean |>
+  left_join(gene_names, by = c("gene_id_clean" = "ENSEMBL")) |>
+  relocate(gene_name = SYMBOL, .after = gene_id_clean) |>
+  arrange(desc(log2FoldChange))
+```
+
+```{r}
+top_genes_adr <- subset(sig_anno, gene_id %in% top_genes$gene_id)
+```
+
+```{r merge results back together}
+sig_anno$significance <- "Significant"
+nonsig$significance <- "Not Significant"
+
+adr_results <- bind_rows(sig_anno, nonsig)
+```
+
+```{r create the volcano plot}
+library(ggrepel)
+
+pdf(
+  here("Sen_13cRA_RNA", "analysis", "deseq2", "adr_degs", "volcano_plot.pdf"),
+  height = 7, width = 9
+)
+
+volcano_plot <- ggplot(adr_results, aes(x = log2FoldChange, y = -log10(padj))) +
+  geom_point(aes(color = significance), alpha = 0.5, size = 2) +
+  scale_color_manual(values = c("Significant" = "chartreuse4", "Not Significant" = "gray")) +
+  geom_text_repel(
+    data = top_genes_adr,
+    aes(label = gene_name),
+    size = 4,
+    box.padding = 0.5,
+    max.overlaps = 25
+  ) +
+  labs(
+    title = "Genes Enriched in ADR Cells after 13cRA",
+    x = "Log2 Fold Change",
+    y = "-Log10 Adjusted P-value",
+    color = "Significance"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",            # Keep the legend on the right
+    plot.title = element_text(hjust = 0.5)  # Center the title
+  )
+
+print(volcano_plot)
+
+dev.off()
+```
+
+# End of script
+```{r style code}
+script <- rstudioapi::getSourceEditorContext()$path
+style_file(script)
+lint(script)
+```
+
+```{r clean environment}
+rm(list = ls())
+gc()
+```

@@ -1,0 +1,53 @@
+---
+title: "TopGO"
+author: "Victoria Flanary"
+date: "2025-01-14"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Objective
+Run TopGO on 
+
+# Set-up
+```{r load packages}
+library(topGO)
+library(org.Hs.eg.db)
+library(tidyverse)
+library(rstudioapi)
+library(here)
+library(styler)
+library(lintr)
+```
+
+```{r load deseq2 results}
+mes <- read_csv(
+  here("Sen_13cRA_RNA", "analysis", "deseq2", "mes_degs", "mes_sig_results.csv")
+)
+
+adr <- read_csv(
+  here("Sen_13cRA_RNA", "analysis", "deseq2", "adr_degs", "adr_sig_results.csv")
+)
+```
+
+# Data Formatting
+```{r filter for upregulated results}
+mes_up <- subset(mes, reg == "up")
+adr_up <- subset(adr, reg == "up")
+```
+
+
+# End of script
+```{r style code}
+script <- rstudioapi::getSourceEditorContext()$path
+style_file(script)
+lint(script)
+```
+
+```{r clean environment}
+rm(list = ls())
+gc()
+```

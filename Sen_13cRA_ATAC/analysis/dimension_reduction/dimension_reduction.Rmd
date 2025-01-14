@@ -1,0 +1,184 @@
+---
+title: "Dimension Reduction on ATAC-seq Peaks"
+author: "Victoria Flanary"
+date: "2025-01-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Objective
+Run dimension reduction on ATAC-seq peaks of 13cRA-treated NB cell lines.
+
+# Set-up
+```{r set seed}
+set.seed(42)
+```
+
+```{r load packages}
+library(tidyverse)
+library(rstudioapi)
+library(here)
+library(styler)
+library(lintr)
+```
+
+```{r load data}
+distal_fpkm <- read_csv(
+  here("Sen_13cRA_ATAC", "data", "counts", "distal_regions_fpkm_counts.csv")
+) |> as.data.frame()
+```
+
+# Format the data
+```{r move fragment col to rownames}
+fragments <- distal_fpkm$fragments
+distal_fpkm <- distal_fpkm[, colnames(distal_fpkm) != "fragments" ]
+rownames(distal_fpkm) <- fragments
+```
+
+```{r save the formatted data}
+write_csv(
+  distal_fpkm,
+  here("Sen_13cRA_ATAC", "data", "counts", "distal_fpkm_counts_formatted.csv")
+)
+```
+
+# PCA
+```{r calculate pca}
+distal_pca <- prcomp(t(distal_fpkm), scale = TRUE)
+```
+
+```{r which pcs accounts for what amount of variation in the data}
+pdf(
+  here("Sen_13cRA_ATAC", "analysis", "dimension_reduction", 
+       "pca_scree_plot.pdf"),
+  height = 4, width = 6
+)
+
+pca_var <- distal_pca$sdev^2
+pca_var_per <- round(pca_var / sum(pca_var) * 100, 1)
+barplot(pca_var_per,
+  main = "Scree plot",
+  xlab = "Principal Components", 
+  ylab = "Percent Variation"
+)
+
+dev.off()
+```
+
+```{r generate metadata df}
+metadata <- data.frame(
+  sample = colnames(distal_fpkm),
+  phenotype = c("ADR", "ADR", "MES", "MES", "MES", "MES", "ADR", "ADR"),
+  mycn_status = c("MYCN_Amp", "MYCN_Amp", "MYCN_NonAmp", "MYCN_NonAmp",
+                  "MYCN_NonAmp", "MYCN_NonAmp", "MYCN_NonAmp", "MYCN_NonAmp")
+)
+
+write_csv(
+  metadata,
+  here("Sen_13cRA_ATAC", "data", "metadata.csv")
+)
+```
+
+```{r format for ggplot2}
+pca_data <- data.frame(
+  metadata,
+  PC1 = distal_pca$x[, 1],
+  PC2 = distal_pca$x[, 2],
+  row.names = NULL
+)
+```
+
+```{r plot pca with ggplot2}
+pdf(
+  here("Sen_13cRA_ATAC", "analysis", "dimension_reduction",
+       "pca_by_sample.pdf")
+)
+
+p <- ggplot(
+  pca_data,
+  aes(x = PC1, y = PC2, color = sample)
+) +
+  geom_point() +
+  xlab(paste0("PC1 - ", pca_var_per[1], "%")) +
+  ylab(paste0("PC2 - ", pca_var_per[2], "%")) +
+  ggtitle("PCA of FPKM-Normalized Distal ATAC-seq Counts")
+
+print(p)
+
+dev.off()
+```
+
+```{r plot pca with ggplot2}
+pdf(
+  here("Sen_13cRA_ATAC", "analysis", "dimension_reduction",
+       "pca_by_phenotype.pdf")
+)
+
+p <- ggplot(
+  pca_data,
+  aes(x = PC1, y = PC2, color = phenotype)
+) +
+  geom_point() +
+  xlab(paste0("PC1 - ", pca_var_per[1], "%")) +
+  ylab(paste0("PC2 - ", pca_var_per[2], "%")) +
+  ggtitle("PCA of FPKM-Normalized Distal ATAC-seq Counts")
+
+print(p)
+
+dev.off()
+```
+
+```{r plot pca with ggplot2}
+pdf(
+  here("Sen_13cRA_ATAC", "analysis", "dimension_reduction",
+       "pca_by_mycn_status.pdf")
+)
+
+p <- ggplot(
+  pca_data,
+  aes(x = PC1, y = PC2, color = mycn_status)
+) +
+  geom_point() +
+  xlab(paste0("PC1 - ", pca_var_per[1], "%")) +
+  ylab(paste0("PC2 - ", pca_var_per[2], "%")) +
+  ggtitle("PCA of FPKM-Normalized Distal ATAC-seq Counts")
+
+print(p)
+
+dev.off()
+```
+
+See technical variation with one IMR-5 replicate, but interesting how the
+two mesenchymal lines cluster separately, while the two adrenergic lines
+with good quality data cluster together.
+
+```{r use loading scores to identify fragments driving variance on pca}
+loading_scores <- distal_pca$rotation[, 1]
+fragment_scores <- abs(loading_scores)
+fragment_scores_ranked <- sort(fragment_scores, decreasing = TRUE)
+top_10_fragments <- names(fragment_scores_ranked[1:10])
+
+x <- distal_pca$rotation[top_10_fragments, 1]
+
+write.table(
+  x, 
+  file.path(here("Sen_13cRA_ATAC", "analysis", "dimension_reduction"),
+           "top_10_fragments_table.txt"),
+  row.names = TRUE
+)
+```
+
+# End of script
+```{r style code}
+script <- rstudioapi::getSourceEditorContext()$path
+style_file(script)
+lint(script)
+```
+
+```{r clean environment}
+rm(list = ls())
+gc()
+```

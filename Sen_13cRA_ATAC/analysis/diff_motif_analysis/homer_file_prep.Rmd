@@ -1,0 +1,158 @@
+---
+title: "HOMER File Prep"
+author: "Victoria Flanary"
+date: "2025-01-14"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Objective
+Generate BED files to run differential motif analysis with HOMER.
+
+# Set-up
+```{r load packages}
+library(GenomicRanges)
+library(rtracklayer)
+library(tidyverse)
+library(rstudioapi)
+library(here)
+library(styler)
+library(lintr)
+```
+
+```{r load data}
+mes_degs <- read_csv(
+  here("Sen_13cRA_ATAC", "analysis", "diff_peak_analysis", "mes_deseq2_sig.csv")
+)
+
+adr_degs <- read_csv(
+  here("Sen_13cRA_ATAC", "analysis", "diff_peak_analysis", "adr_deseq2_sig.csv")
+)
+
+all_results <- read_csv(
+  here("Sen_13cRA_ATAC", "analysis", "diff_peak_analysis", "adr_deseq2_all.csv")
+)
+```
+
+# Upregulated DEGS
+```{r}
+mes_up <- mes_degs |>
+  filter(reg == "up") |>
+  arrange(desc(log2FoldChange)) |>
+  filter(!grepl("^chrX|^chrY", peak_id))
+
+adr_up <- adr_degs |>
+  filter(reg == "up") |>
+  arrange(desc(log2FoldChange)) |>
+  filter(!grepl("^chrX|^chrY", peak_id))
+```
+
+# Background  Objects
+```{r}
+nonsig <- all_results |>
+  filter(padj > 0.05) |>
+  arrange(desc(log2FoldChange)) |>
+  filter(!grepl("^chrX|^chrY", peak_id))
+
+all_results <- all_results |>
+  arrange(desc(log2FoldChange)) |>
+  filter(!grepl("^chrX|^chrY", peak_id))
+```
+
+# DF to GRanges
+```{r format peak ids for granges}
+mes_df <- mes_up |>
+  separate(peak_id,
+    into = c("chrom", "chromStart", "chromEnd"),
+    sep = "_",
+    convert = TRUE
+  )
+
+adr_df <- adr_up |>
+  separate(peak_id,
+    into = c("chrom", "chromStart", "chromEnd"),
+    sep = "_",
+    convert = TRUE
+  )
+
+nonsig_df <- nonsig |>
+  separate(peak_id,
+    into = c("chrom", "chromStart", "chromEnd"),
+    sep = "_",
+    convert = TRUE
+  )
+
+all_res_df <- all_results |>
+  separate(peak_id,
+    into = c("chrom", "chromStart", "chromEnd"),
+    sep = "_",
+    convert = TRUE
+  )
+```
+
+```{r generate granges objects}
+mes_gr <- makeGRangesFromDataFrame(mes_df)
+adr_gr <- makeGRangesFromDataFrame(adr_df)
+nonsig_gr <- makeGRangesFromDataFrame(nonsig_df)
+all_res_gr <- makeGRangesFromDataFrame(all_res_df)
+```
+
+```{r save mes and adr granges}
+saveRDS(
+  mes_gr,
+  here("Sen_13cRA_ATAC", "data", "granges", "mes_sig_up_gr.rds")
+)
+
+saveRDS(
+  adr_gr,
+  here("Sen_13cRA_ATAC", "data", "granges", "adr_sig_up_gr.rds")
+)
+
+saveRDS(
+  nonsig_gr,
+  here("Sen_13cRA_ATAC", "data", "granges", "all_nonsig_gr.rds")
+)
+
+saveRDS(
+  all_res_gr,
+  here("Sen_13cRA_ATAC", "data", "granges", "all_res_gr.rds")
+)
+```
+
+# GRanges to BED files
+```{r}
+export.bed(
+  mes_gr,
+  here("Sen_13cRA_ATAC", "analysis", "diff_motif_analysis", "inputs", "mes_upreg.bed")
+)
+
+export.bed(
+  adr_gr,
+  here("Sen_13cRA_ATAC", "analysis", "diff_motif_analysis", "inputs", "adr_upreg.bed")
+)
+
+export.bed(
+  nonsig_gr,
+  here("Sen_13cRA_ATAC", "analysis", "diff_motif_analysis", "inputs", "nonsig.bed")
+)
+
+export.bed(
+  all_res_gr,
+  here("Sen_13cRA_ATAC", "analysis", "diff_motif_analysis", "inputs", "all_results.bed")
+)
+```
+
+# End of script
+```{r style code}
+script <- rstudioapi::getSourceEditorContext()$path
+style_file(script)
+lint(script)
+```
+
+```{r clean environment}
+rm(list = ls())
+gc()
+```

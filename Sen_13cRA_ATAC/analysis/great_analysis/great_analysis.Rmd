@@ -1,0 +1,94 @@
+---
+title: "GREAT Analysis"
+author: "Victoria Flanary"
+date: "2025-01-14"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Objective
+Run GREAT analysis on the diffferential peak analysis results.
+
+# Set-up
+```{r load packages}
+library(GenomicFeatures)
+library(DESeq2)
+library(rGREAT)
+library(AnnotationDbi)
+library(matrixStats)
+library(stats)
+library(tidyverse)
+library(rstudioapi)
+library(here)
+library(styler)
+library(lintr)
+```
+
+```{r load data}
+mes_gr <- readRDS(
+  here("Sen_13cRA_ATAC", "data", "granges", "mes_sig_up_gr.rds")
+)
+
+adr_gr <- readRDS(
+  here("Sen_13cRA_ATAC", "data", "granges", "adr_sig_up_gr.rds")
+)
+
+background <- readRDS(
+  here("Sen_13cRA_ATAC", "data", "granges", "all_res_gr.rds")
+)
+```
+
+# MES
+```{r}
+mes_great <- great(
+  gr = mes_gr,
+  gene_sets = "GO:BP",
+  tss_source = "txdb:hg38",
+  background = background
+  )
+  
+mes_table <- getEnrichmentTable(mes_great)
+mes_table <- mes_table |>
+    filter(fold_enrichment > 1.5) |>
+    arrange(desc(fold_enrichment))
+  
+write_csv(
+  mes_table,
+  here("Sen_13cRA_ATAC", "analysis", "great_analysis", "mes_go.csv")
+)
+```
+
+# ADR
+```{r}
+adr_great <- great(
+  gr = adr_gr,
+  gene_sets = "GO:BP",
+  tss_source = "txdb:hg38",
+  background = background
+  )
+  
+adr_table <- getEnrichmentTable(adr_great)
+adr_table <- adr_table |>
+    filter(fold_enrichment > 1.5) |>
+    arrange(desc(fold_enrichment))
+  
+write_csv(
+  adr_table,
+  here("Sen_13cRA_ATAC", "analysis", "great_analysis", "adr_go.csv")
+)
+```
+
+# End of script
+```{r style code}
+script <- rstudioapi::getSourceEditorContext()$path
+style_file(script)
+lint(script)
+```
+
+```{r clean environment}
+rm(list = ls())
+gc()
+```
